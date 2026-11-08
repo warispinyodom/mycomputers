@@ -1,0 +1,17 @@
+Flask==3.0.3
+python-dotenv==1.0.1
+firebase-admin==6.5.0
+requests==2.31.0
+werkzeug==3.0.2
+
+# CORS & Cloud Storage Service (ที่ใช้งานใน app.py)
+flask-cors==4.0.1
+supabase==2.4.0
+
+# เครื่องมือสำหรับ Import ข้อมูล และประมวลผล Data สำหรับทำ Chart
+pandas==2.2.2
+openpyxl==3.1.2
+
+# เครื่องมือสร้าง/นำเข้ากราฟในรูปแบบรูปภาพ (Server-side Charting)
+matplotlib==3.8.4
+seaborn==0.13.2

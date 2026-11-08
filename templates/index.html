@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyComputers - Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Prompt', 'sans-serif'] } } }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+
+<body class="bg-slate-950 min-h-screen text-slate-100 font-sans antialiased flex overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+
+    <!-- Left Sidebar Navigation Menu -->
+    <aside id="main-sidebar" class="hidden fixed md:sticky top-0 left-0 h-screen w-64 bg-slate-900/95 border-r border-slate-800/80 z-50 flex-col justify-between transition-all duration-300 transform -translate-x-full md:translate-x-0 shrink-0">
+        <div>
+            <!-- Sidebar Header / Brand Logo -->
+            <div class="h-20 px-6 flex items-center justify-between border-b border-slate-800/80">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="location.reload()">
+                    <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl shadow-lg shadow-indigo-500/25 text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div id="sidebar-logo-text">
+                        <h1 class="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent tracking-tight">MyComputers</h1>
+                        <span id="role-badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/80">User</span>
+                    </div>
+                </div>
+
+                <button onclick="toggleSidebar()" class="hidden md:flex text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800/80 transition focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <div id="sidebar-menu-links" class="p-4 space-y-2">
+                <p class="sidebar-text text-[10px] uppercase font-bold tracking-wider text-slate-500 px-3 mb-2">เมนูการใช้งาน</p>
+                
+                <button id="menu-inventory" onclick="switchRoute('inventory')" class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    <span class="sidebar-text truncate">📦 จัดการคลังสินค้า</span>
+                </button>
+
+                <!-- Admin Only Routes -->
+                <div id="admin-sidebar-menu" class="space-y-2 hidden">
+                    <button id="menu-batch-add" onclick="switchRoute('batch-add')" class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span class="sidebar-text truncate">⚡ เพิ่มหลายรายการ (Batch Add)</span>
+                    </button>
+
+                    <button id="menu-stock-logs" onclick="switchRoute('stock-logs')" class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <span class="sidebar-text truncate">📋 ประวัติเวลาเข้า-ออกสินค้า</span>
+                    </button>
+                </div>
+
+                <!-- Account & Security Settings Menu (สำหรับผู้ใช้ทุกคน) -->
+                <button id="menu-settings" onclick="switchRoute('settings')" class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                    <svg class="w-5 h-5 shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <span class="sidebar-text truncate">⚙️ ข้อมูลส่วนตัวและความปลอดภัย</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar User Profile Footer -->
+        <div id="sidebar-user-footer" class="p-4 border-t border-slate-800/80 hidden">
+            <div onclick="switchRoute('settings')" class="flex items-center space-x-3 bg-slate-950/80 p-3 rounded-2xl border border-slate-800/80 cursor-pointer hover:border-indigo-500/40 transition">
+                <img id="sidebar-user-avatar" class="w-8 h-8 rounded-full border border-indigo-500/40 object-cover hidden" alt="Avatar">
+                <div class="sidebar-text min-w-0 flex-1">
+                    <p id="sidebar-user-email" class="text-xs font-medium text-slate-200 truncate"></p>
+                    <p id="sidebar-user-role" class="text-[10px] text-indigo-400 capitalize font-semibold"></p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+
+        <!-- Header Bar -->
+        <header id="main-header" class="hidden bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-30 h-20 px-4 sm:px-6 justify-between items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleSidebar()" class="p-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700/60 transition focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <h2 id="page-title" class="text-base font-bold text-white hidden sm:block">จัดการคลังสินค้า</h2>
+            </div>
+
+            <!-- Search Bar -->
+            <div id="nav-search-box" class="flex-1 max-w-xs sm:max-w-md">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="inventory-search-input" oninput="handleSearchInventory(this.value)" placeholder="ค้นหาชื่อรุ่น หรือแบรนด์..." 
+                        class="w-full pl-10 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-xs sm:text-sm text-slate-200 placeholder-slate-500 transition">
+                </div>
+            </div>
+
+            <!-- Logout Button -->
+            <div id="nav-user-header" class="flex items-center space-x-3">
+                <button onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs sm:text-sm px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5 focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span class="hidden sm:inline">ออกจากระบบ</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col justify-center">
+
+            <!-- Auth Screen -->
+            <div id="view-auth" class="w-full max-w-md mx-auto my-auto py-6">
+                <div class="text-center mb-8">
+                    <div class="inline-flex bg-gradient-to-tr from-indigo-600 to-violet-500 p-3.5 rounded-3xl shadow-xl shadow-indigo-500/30 text-white mb-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">MyComputers</h1>
+                    <p class="text-xs text-slate-400 mt-1">ระบบบริหารจัดการคลังสินค้าคอมพิวเตอร์</p>
+                </div>
+
+                <div class="bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                    <div class="flex bg-slate-950 p-1.5 rounded-2xl mb-6 border border-slate-800">
+                        <button id="tab-login-btn" onclick="switchAuthTab('login')" class="w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 focus:outline-none">เข้าสู่ระบบ</button>
+                        <button id="tab-register-btn" onclick="switchAuthTab('register')" class="w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 text-slate-400 hover:text-white focus:outline-none">ลงทะเบียน</button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">อีเมล</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                                </span>
+                                <input type="email" id="login-email" placeholder="example@domain.com" required class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">รหัสผ่าน</label>
+                                <button type="button" onclick="handleForgotPassword()" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">ลืมรหัสผ่าน?</button>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                </span>
+                                <input type="password" id="login-password" placeholder="••••••••" required class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-semibold transition duration-200 shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 focus:outline-none">
+                            <span>เข้าสู่ระบบ</span>
+                        </button>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">อีเมล</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                                </span>
+                                <input type="email" id="reg-email" placeholder="example@domain.com" required class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                </span>
+                                <input type="password" id="reg-password" placeholder="••••••••" required minlength="6" class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-semibold transition duration-200 shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 focus:outline-none">
+                            <span>สมัครสมาชิก & ส่งอีเมลยืนยัน</span>
+                        </button>
+                    </form>
+
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
+                        <div class="relative flex justify-center text-xs uppercase"><span class="bg-slate-900 px-3 text-slate-500">หรือ</span></div>
+                    </div>
+
+                    <button type="button" onclick="handleGoogleLogin()" class="w-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-200 font-medium py-3 px-4 rounded-xl transition flex items-center justify-center space-x-3 group focus:outline-none">
+                        <svg class="w-5 h-5 group-hover:scale-110 transition" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                        </svg>
+                        <span>เข้าสู่ระบบด้วย Google</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Route 1: Inventory View -->
+            <div id="route-admin-inventory" class="hidden space-y-8 my-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+                        <p class="text-xs text-slate-400 font-medium">รายการสินค้าทั้งหมด</p>
+                        <p id="stat-count" class="text-2xl font-bold text-white mt-1">0</p>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+                        <p class="text-xs text-slate-400 font-medium">จำนวนสินค้าในสต็อกรวม</p>
+                        <p id="stat-total-stock" class="text-2xl font-bold text-amber-400 mt-1">0 ชิ้น</p>
+                    </div>
+                    <div id="stat-cost-card" class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+                        <p class="text-xs text-slate-400 font-medium">มูลค่าราคาทุนรวม</p>
+                        <p id="stat-cost-total" class="text-2xl font-bold text-rose-400 mt-1">0 ฿</p>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+                        <p class="text-xs text-slate-400 font-medium">มูลค่าราคาขายรวม</p>
+                        <p id="stat-price-total" class="text-2xl font-bold text-emerald-400 mt-1">0 ฿</p>
+                    </div>
+                </div>
+
+                <!-- Sales Analytics Bar Chart Section -->
+                <div id="admin-sales-analytics" class="bg-slate-900/80 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                                <span class="bg-indigo-500/20 text-indigo-400 p-1.5 rounded-lg border border-indigo-500/30">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                </span>
+                                <span>รายงานยอดขายและวิเคราะห์ผลตอบแทน</span>
+                            </h2>
+                            <p class="text-xs text-slate-400 mt-1">คำนวณจากประวัติการตัดขายสินค้าออก (Stock OUT)</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-indigo-500/20">
+                            <p class="text-xs text-slate-400 font-medium">💰 ยอดขาย รวมทั้งหมด</p>
+                            <p id="stat-sales-revenue" class="text-xl font-bold text-indigo-400 mt-1">0 ฿</p>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-emerald-500/20">
+                            <p class="text-xs text-slate-400 font-medium">📈 กำไรทั้งหมด (หักลบทุน)</p>
+                            <p id="stat-sales-profit" class="text-xl font-bold text-emerald-400 mt-1">0 ฿</p>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-amber-500/20">
+                            <p class="text-xs text-slate-400 font-medium">📦 จำนวนสินค้าที่ขายไป</p>
+                            <p id="stat-sales-qty" class="text-xl font-bold text-amber-400 mt-1">0 ชิ้น</p>
+                        </div>
+                    </div>
+
+                    <div class="relative w-full h-72 sm:h-80 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                        <canvas id="salesAnalyticsChart"></canvas>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-white">รายการสินค้าในคลัง</h3>
+                    </div>
+                    <div id="admin-inventory-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </div>
+            </div>
+
+            <!-- Route 2: Batch Add Multiple Items System -->
+            <div id="route-admin-batch-add" class="hidden space-y-6 my-auto">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-6 rounded-3xl">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                            <span class="bg-emerald-500/20 text-emerald-400 p-1.5 rounded-lg border border-emerald-500/30">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </span>
+                            <span>ระบบเพิ่มสินค้าหลายรายการพร้อมกัน (Batch Add)</span>
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">กรอกข้อมูลสินค้าและเลือกรูปภาพหลายรายการพร้อมกันแล้วกดบันทึกในครั้งเดียว</p>
+                    </div>
+                    
+                    <button type="button" onclick="addBatchRow()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-xs transition shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 focus:outline-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span>+ เพิ่มช่องสินค้าใหม่</span>
+                    </button>
+                </div>
+
+                <form id="form-batch-add" onsubmit="handleBatchSubmit(event)" class="space-y-6">
+                    <div id="batch-items-container" class="space-y-6"></div>
+
+                    <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-xs text-slate-400">
+                            จำนวนรายการที่จะบันทึก: <span id="batch-total-count-badge" class="font-bold text-indigo-400 text-sm">1</span> รายการ
+                        </div>
+                        <button type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-emerald-600/30 focus:outline-none flex items-center justify-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>บันทึกสินค้าทั้งหมดเข้าคลัง</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Route 3: Stock In/Out Logs Timeline -->
+            <div id="route-admin-stock-logs" class="hidden space-y-6 my-auto">
+                <h2 class="text-xl font-bold text-white">📋 ประวัติเวลาเข้า-ออกสินค้าทั้งหมด</h2>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden p-4">
+                    <div id="global-stock-logs-table" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- NEW Route 4: Account & Security Settings Dashboard -->
+            <div id="route-user-settings" class="hidden space-y-8 my-auto max-w-4xl mx-auto w-full">
+                <!-- User Profile Overview Card -->
+                <div class="bg-slate-900/90 border border-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <img id="settings-user-avatar" class="w-16 h-16 rounded-2xl border-2 border-indigo-500/50 object-cover bg-slate-950 p-1" src="https://via.placeholder.com/150?text=User" alt="Avatar">
+                            <span id="settings-user-badge" class="absolute -bottom-1 -right-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-600 text-white shadow">User</span>
+                        </div>
+                        <div>
+                            <h3 id="settings-user-email-display" class="text-lg font-bold text-white">user@domain.com</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">สถานะบัญชี: <span id="settings-user-status" class="text-emerald-400 font-semibold">ยืนยันแล้ว ✔</span></p>
+                        </div>
+                    </div>
+
+                    <button onclick="handleSendResetPasswordEmail()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 rounded-xl text-xs font-semibold transition flex items-center space-x-2 focus:outline-none">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>ส่งลิงก์รีเซ็ตรหัสผ่านเข้าอีเมลเดิม</span>
+                    </button>
+                </div>
+
+                <!-- Forms Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Form 1: Change Email -->
+                    <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-4">
+                        <div class="border-b border-slate-800 pb-3">
+                            <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                                <span class="bg-indigo-500/20 text-indigo-400 p-1 rounded-lg border border-indigo-500/30">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                                </span>
+                                <span>เปลี่ยนอีเมลประจำบัญชี</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">ระบบจะส่งลิงก์ยืนยันไปที่อีเมลใหม่ก่อนทำการอัปเดต</p>
+                        </div>
+
+                        <form id="form-change-email" onsubmit="handleChangeEmail(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านปัจจุบัน * (เพื่อยืนยันตัวตน)</label>
+                                <input type="password" id="change-email-current-pass" required placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-indigo-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">อีเมลใหม่ที่ต้องการใช้ *</label>
+                                <input type="email" id="change-email-new" required placeholder="newemail@domain.com" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-indigo-500 transition">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition focus:outline-none">
+                                ยืนยันเปลี่ยนอีเมล & ส่งลิงก์ Verify
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Form 2: Change Password -->
+                    <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-4">
+                        <div class="border-b border-slate-800 pb-3">
+                            <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                                <span class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg border border-emerald-500/30">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                </span>
+                                <span>เปลี่ยนรหัสผ่านใหม่</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">กำหนดรหัสผ่านใหม่เพื่อความปลอดภัยในการเข้าใช้งาน</p>
+                        </div>
+
+                        <form id="form-change-password" onsubmit="handleChangePassword(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านปัจจุบัน * (เพื่อยืนยันตัวตน)</label>
+                                <input type="password" id="change-pass-current" required placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านใหม่ * (อย่างน้อย 6 ตัวอักษร)</label>
+                                <input type="password" id="change-pass-new" required minlength="6" placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">ยืนยันรหัสผ่านใหม่ *</label>
+                                <input type="password" id="change-pass-confirm" required minlength="6" placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/30 transition focus:outline-none">
+                                บันทึกการเปลี่ยนรหัสผ่านใหม่
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script id="firebase-config-data" type="application/json">
+        {{ firebase_config | tojson | safe }}
+    </script>
+
+    <script>
+        const firebaseConfig = JSON.parse(document.getElementById('firebase-config-data').textContent);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        let currentUserRole = 'user';
+        let globalComputersData = [];
+        let batchItemIndex = 0;
+        let salesChartInstance = null;
+
+        const TAB_LOGIN_ACTIVE = "w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 focus:outline-none";
+        const TAB_REG_ACTIVE = "w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 focus:outline-none";
+        const TAB_INACTIVE = "w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 text-slate-400 hover:text-white focus:outline-none";
+
+        const SIDEBAR_BTN_OFF = "w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none";
+        const SIDEBAR_BTN_ON = "w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-md shadow-indigo-600/10 transition focus:outline-none";
+
+        function getFirebaseErrorMessage(error) {
+            const code = error.code || '';
+            switch (code) {
+                case 'auth/invalid-credential':
+                case 'auth/wrong-password':
+                    return 'รหัสผ่านปัจจุบันไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง';
+                case 'auth/user-not-found':
+                    return 'ไม่พบบัญชีผู้ใช้งานนี้ในระบบ';
+                case 'auth/email-already-in-use':
+                    return 'อีเมลนี้ถูกลงทะเบียนไว้ในระบบแล้ว';
+                case 'auth/invalid-email':
+                    return 'รูปแบบอีเมลไม่ถูกต้อง';
+                case 'auth/weak-password':
+                    return 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร';
+                case 'auth/requires-recent-login':
+                    return 'เพื่อความปลอดภัย กรุณาเข้าสู่ระบบใหม่อีกครั้งก่อนทำรายการ';
+                case 'auth/popup-closed-by-user':
+                    return 'การเข้าสู่ระบบผ่าน Google ถูกยกเลิก';
+                default:
+                    return error.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อระบบ';
+            }
+        }
+
+        const showLoading = (title = 'กำลังดำเนินการ...') => {
+            Swal.fire({ title, allowOutsideClick: false, background: '#0f172a', color: '#f8fafc', didOpen: () => Swal.showLoading() });
+        };
+        const notifySuccess = (title, text) => Swal.fire({ icon: 'success', title, text, background: '#0f172a', color: '#f8fafc', confirmButtonColor: '#4f46e5' });
+        const notifyError = (title, text) => Swal.fire({ icon: 'error', title, text, background: '#0f172a', color: '#f8fafc', confirmButtonColor: '#ef4444' });
+
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                if (!user.emailVerified) {
+                    showAuthUI();
+                    return;
+                }
+                try {
+                    const idToken = await user.getIdToken();
+                    const res = await fetch('/api/auth/verify-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_token: idToken })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        currentUserRole = data.user.role || 'user';
+                        setupUserUI(data.user, user.photoURL);
+                    } else {
+                        showAuthUI();
+                    }
+                } catch (err) {
+                    showAuthUI();
+                }
+            } else {
+                showAuthUI();
+            }
+        });
+
+        function showAuthUI() {
+            document.getElementById('main-sidebar').classList.add('hidden');
+            document.getElementById('main-sidebar').classList.remove('flex');
+            document.getElementById('main-header').classList.add('hidden');
+            document.getElementById('main-header').classList.remove('flex');
+
+            document.getElementById('view-auth').classList.remove('hidden');
+            document.getElementById('route-admin-inventory').classList.add('hidden');
+            document.getElementById('route-admin-batch-add').classList.add('hidden');
+            document.getElementById('route-admin-stock-logs').classList.add('hidden');
+            document.getElementById('route-user-settings').classList.add('hidden');
+        }
+
+        function setupUserUI(user, photoURL = null) {
+            document.getElementById('view-auth').classList.add('hidden');
+
+            const sidebar = document.getElementById('main-sidebar');
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('flex');
+
+            const header = document.getElementById('main-header');
+            header.classList.remove('hidden');
+            header.classList.add('flex');
+
+            document.getElementById('sidebar-user-footer').classList.remove('hidden');
+            document.getElementById('sidebar-user-email').innerText = user.email;
+            document.getElementById('sidebar-user-role').innerText = `Role: ${currentUserRole}`;
+
+            document.getElementById('settings-user-email-display').innerText = user.email;
+            document.getElementById('settings-user-badge').innerText = currentUserRole;
+
+            const badge = document.getElementById('role-badge');
+            badge.innerText = currentUserRole;
+
+            if (currentUserRole === 'admin') {
+                badge.className = 'text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-600/30 text-indigo-400 border border-indigo-500/30';
+                document.getElementById('admin-sidebar-menu').classList.remove('hidden');
+                document.getElementById('stat-cost-card').classList.remove('hidden');
+                document.getElementById('admin-sales-analytics').classList.remove('hidden');
+            } else {
+                badge.className = 'text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-600/30 text-emerald-400 border border-emerald-500/30';
+                document.getElementById('admin-sidebar-menu').classList.add('hidden');
+                document.getElementById('stat-cost-card').classList.add('hidden');
+                document.getElementById('admin-sales-analytics').classList.add('hidden');
+            }
+
+            if (photoURL) {
+                document.getElementById('sidebar-user-avatar').src = photoURL;
+                document.getElementById('sidebar-user-avatar').classList.remove('hidden');
+                document.getElementById('settings-user-avatar').src = photoURL;
+            }
+
+            switchRoute('inventory');
+            loadInventory();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('main-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            if (window.innerWidth < 768) {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                    backdrop.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    backdrop.classList.add('hidden');
+                }
+            } else {
+                if (sidebar.classList.contains('md:w-64')) {
+                    sidebar.classList.remove('md:w-64');
+                    sidebar.classList.add('md:w-20');
+                    document.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('md:hidden'));
+                    document.getElementById('sidebar-logo-text').classList.add('md:hidden');
+                } else {
+                    sidebar.classList.remove('md:w-20');
+                    sidebar.classList.add('md:w-64');
+                    document.querySelectorAll('.sidebar-text').forEach(el => el.classList.remove('md:hidden'));
+                    document.getElementById('sidebar-logo-text').classList.remove('md:hidden');
+                }
+            }
+        }
+
+        function switchRoute(route) {
+            document.getElementById('route-admin-inventory').classList.add('hidden');
+            document.getElementById('route-admin-batch-add').classList.add('hidden');
+            document.getElementById('route-admin-stock-logs').classList.add('hidden');
+            document.getElementById('route-user-settings').classList.add('hidden');
+
+            const btnInv = document.getElementById('menu-inventory');
+            const btnBatch = document.getElementById('menu-batch-add');
+            const btnLogs = document.getElementById('menu-stock-logs');
+            const btnSettings = document.getElementById('menu-settings');
+            const pageTitle = document.getElementById('page-title');
+
+            btnInv.className = SIDEBAR_BTN_OFF;
+            if(btnBatch) btnBatch.className = SIDEBAR_BTN_OFF;
+            if(btnLogs) btnLogs.className = SIDEBAR_BTN_OFF;
+            btnSettings.className = SIDEBAR_BTN_OFF;
+
+            if (route === 'inventory') {
+                document.getElementById('route-admin-inventory').classList.remove('hidden');
+                btnInv.className = SIDEBAR_BTN_ON;
+                if(pageTitle) pageTitle.innerText = "จัดการคลังสินค้า";
+            } else if (route === 'batch-add') {
+                document.getElementById('route-admin-batch-add').classList.remove('hidden');
+                if(btnBatch) btnBatch.className = SIDEBAR_BTN_ON;
+                if(pageTitle) pageTitle.innerText = "เพิ่มสินค้าหลายรายการ (Batch Add)";
+                if (document.getElementById('batch-items-container').children.length === 0) {
+                    addBatchRow();
+                }
+            } else if (route === 'stock-logs') {
+                document.getElementById('route-admin-stock-logs').classList.remove('hidden');
+                if(btnLogs) btnLogs.className = SIDEBAR_BTN_ON;
+                if(pageTitle) pageTitle.innerText = "ประวัติการเคลื่อนไหวสต็อก";
+                renderGlobalStockLogs();
+            } else if (route === 'settings') {
+                document.getElementById('route-user-settings').classList.remove('hidden');
+                btnSettings.className = SIDEBAR_BTN_ON;
+                if(pageTitle) pageTitle.innerText = "จัดการข้อมูลส่วนตัวและความปลอดภัย";
+            }
+
+            if (window.innerWidth < 768) {
+                document.getElementById('main-sidebar').classList.add('-translate-x-full');
+                document.getElementById('sidebar-backdrop').classList.add('hidden');
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const btnLogin = document.getElementById('tab-login-btn');
+            const btnReg = document.getElementById('tab-register-btn');
+            const formLogin = document.getElementById('form-login');
+            const formReg = document.getElementById('form-register');
+
+            if (tab === 'login') {
+                formLogin.classList.remove('hidden');
+                formReg.classList.add('hidden');
+                btnLogin.className = TAB_LOGIN_ACTIVE;
+                btnReg.className = TAB_INACTIVE;
+            } else {
+                formLogin.classList.add('hidden');
+                formReg.classList.remove('hidden');
+                btnReg.className = TAB_REG_ACTIVE;
+                btnLogin.className = TAB_INACTIVE;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            showLoading('กำลังเข้าสู่ระบบ...');
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                if (!user.emailVerified) {
+                    await auth.signOut();
+                    notifyError('ไม่อนุญาตให้เข้าใช้งาน', 'กรุณายืนยันตัวตนผ่านอีเมลของคุณก่อน');
+                    return;
+                }
+
+                const idToken = await user.getIdToken();
+                const res = await fetch('/api/auth/verify-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_token: idToken })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    currentUserRole = data.user.role || 'user';
+                    setupUserUI(data.user);
+                    notifySuccess('สำเร็จ', 'เข้าสู่ระบบเรียบร้อยแล้ว');
+                } else {
+                    notifyError('ข้อผิดพลาด', data.message);
+                }
+            } catch (err) {
+                notifyError('เข้าสู่ระบบไม่สำเร็จ', getFirebaseErrorMessage(err));
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            showLoading('กำลังสร้างบัญชีผู้ใช้...');
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.sendEmailVerification();
+                await auth.signOut();
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'ส่งอีเมลยืนยันตัวตนแล้ว',
+                    text: 'กรุณาตรวจสอบกล่องข้อความในอีเมลของท่าน และกดยืนยันตัวตนก่อนเข้าสู่ระบบ',
+                    background: '#0f172a', color: '#f8fafc', confirmButtonColor: '#4f46e5'
+                });
+                switchAuthTab('login');
+            } catch (err) {
+                notifyError('สมัครสมาชิกไม่สำเร็จ', getFirebaseErrorMessage(err));
+            }
+        }
+
+        async function handleGoogleLogin() {
+            showLoading('กำลังเชื่อมต่อ Google Auth...');
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                const user = result.user;
+
+                const idToken = await user.getIdToken();
+                const res = await fetch('/api/auth/verify-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_token: idToken })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    currentUserRole = data.user.role || 'user';
+                    setupUserUI(data.user, user.photoURL);
+                    notifySuccess('สำเร็จ', 'เข้าสู่ระบบด้วย Google เรียบร้อยแล้ว');
+                } else {
+                    notifyError('ข้อผิดพลาด', data.message);
+                }
+            } catch (err) {
+                if (err.code !== 'auth/popup-closed-by-user') {
+                    notifyError('การเชื่อมต่อล้มเหลว', getFirebaseErrorMessage(err));
+                } else {
+                    Swal.close();
+                }
+            }
+        }
+
+        async function handleForgotPassword() {
+            const { value: email } = await Swal.fire({
+                title: 'รีเซ็ตรหัสผ่าน',
+                input: 'email',
+                inputLabel: 'กรอกอีเมลของคุณเพื่อรับลิงก์สร้างรหัสผ่านใหม่',
+                inputPlaceholder: 'example@domain.com',
+                showCancelButton: true,
+                confirmButtonText: 'ส่งลิงก์รีเซ็ต',
+                cancelButtonText: 'ยกเลิก',
+                background: '#0f172a', color: '#f8fafc', confirmButtonColor: '#4f46e5'
+            });
+
+            if (email) {
+                showLoading('กำลังส่งอีเมลรีเซ็ตรหัสผ่าน...');
+                try {
+                    await auth.sendPasswordResetEmail(email);
+                    notifySuccess('ส่งลิงก์สำเร็จ', `ระบบได้ส่งลิงก์ตั้งรหัสผ่านใหม่ไปที่ ${email} เรียบร้อยแล้ว`);
+                } catch (err) {
+                    notifyError('ส่งลิงก์ไม่สำเร็จ', getFirebaseErrorMessage(err));
+                }
+            }
+        }
+
+        // ---------------------------------------------------------
+        // SECURITY & PROFILE MANAGEMENT FUNCTIONS
+        // ---------------------------------------------------------
+        async function reauthenticateUser(currentPassword) {
+            const user = auth.currentUser;
+            if (!user) throw new Error('ไม่พบข้อมูลผู้ใช้งาน');
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+            await user.reauthenticateWithCredential(credential);
+            return user;
+        }
+
+        async function handleChangeEmail(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('change-email-current-pass').value;
+            const newEmail = document.getElementById('change-email-new').value;
+
+            showLoading('กำลังยืนยันรหัสผ่านและดำเนินการ...');
+            try {
+                const user = await reauthenticateUser(currentPassword);
+                
+                // ส่ง Verify Link ไปยังอีเมลใหม่
+                await user.verifyBeforeUpdateEmail(newEmail);
+
+                notifySuccess('ส่งลิงก์ยืนยันสำเร็จ!', `ระบบได้ส่งลิงก์ยืนยันไปที่ ${newEmail} แล้ว กรุณากดยืนยันในกล่องข้อความเพื่อเปลี่ยนอีเมลให้สมบูรณ์`);
+                document.getElementById('form-change-email').reset();
+            } catch (err) {
+                notifyError('การเปลี่ยนอีเมลล้มเหลว', getFirebaseErrorMessage(err));
+            }
+        }
+
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('change-pass-current').value;
+            const newPassword = document.getElementById('change-pass-new').value;
+            const confirmPassword = document.getElementById('change-pass-confirm').value;
+
+            if (newPassword !== confirmPassword) {
+                notifyError('ข้อมูลไม่ถูกต้อง', 'รหัสผ่านใหม่และช่องยืนยันรหัสผ่านไม่ตรงกัน');
+                return;
+            }
+
+            showLoading('กำลังยืนยันรหัสผ่านเดิมและเปลี่ยนรหัสผ่านใหม่...');
+            try {
+                const user = await reauthenticateUser(currentPassword);
+                await user.updatePassword(newPassword);
+
+                notifySuccess('เปลี่ยนรหัสผ่านสำเร็จ', 'รหัสผ่านใหม่ของคุณถูกอัปเดตเรียบร้อยแล้ว');
+                document.getElementById('form-change-password').reset();
+            } catch (err) {
+                notifyError('เปลี่ยนรหัสผ่านไม่สำเร็จ', getFirebaseErrorMessage(err));
+            }
+        }
+
+        async function handleSendResetPasswordEmail() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            showLoading('กำลังส่งลิงก์รีเซ็ตรหัสผ่าน...');
+            try {
+                await auth.sendPasswordResetEmail(user.email);
+                notifySuccess('ส่งลิงก์สำเร็จ', `ส่งลิงก์ตั้งรหัสผ่านใหม่ไปที่อีเมลเดิม (${user.email}) เรียบร้อยแล้ว`);
+            } catch (err) {
+                notifyError('เกิดข้อผิดพลาด', getFirebaseErrorMessage(err));
+            }
+        }
+
+        async function handleLogout() {
+            showLoading('กำลังออกจากระบบ...');
+            await auth.signOut();
+            await fetch('/api/auth/logout', { method: 'POST' });
+            showAuthUI();
+            Swal.close();
+        }
+
+        async function loadInventory() {
+            try {
+                const res = await fetch('/api/computers');
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.message);
+
+                globalComputersData = result.data || [];
+                renderInventoryCards(globalComputersData);
+                calculateStats(globalComputersData);
+                updateSalesAnalytics(globalComputersData);
+            } catch (err) {
+                notifyError('ดึงข้อมูลสินค้าไม่สำเร็จ', err.message);
+            }
+        }
+
+        function updateSalesAnalytics(computers) {
+            let totalQtySold = 0;
+            let totalSalesRevenue = 0;
+            let totalProfit = 0;
+
+            computers.forEach(comp => {
+                const price = Number(comp.price || 0);
+                const costPrice = Number(comp.cost_price || 0);
+                const profitPerUnit = price - costPrice;
+
+                if (comp.logs && Array.isArray(comp.logs)) {
+                    comp.logs.forEach(log => {
+                        if (log.type === 'OUT') {
+                            const qty = Number(log.quantity || 0);
+                            totalQtySold += qty;
+                            totalSalesRevenue += (qty * price);
+                            totalProfit += (qty * profitPerUnit);
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('stat-sales-revenue').innerText = `${totalSalesRevenue.toLocaleString()} ฿`;
+            document.getElementById('stat-sales-profit').innerText = `${totalProfit.toLocaleString()} ฿`;
+            document.getElementById('stat-sales-qty').innerText = `${totalQtySold.toLocaleString()} ชิ้น`;
+
+            renderSalesChart(totalSalesRevenue, totalProfit, totalQtySold);
+        }
+
+        function renderSalesChart(salesRevenue, profit, qtySold) {
+            const ctx = document.getElementById('salesAnalyticsChart');
+            if (!ctx) return;
+
+            if (salesChartInstance) {
+                salesChartInstance.destroy();
+            }
+
+            salesChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['ยอดขายรวมทั้งหมด (บาท)', 'กำไรสุทธิหักทุน (บาท)', 'จำนวนสินค้าที่ขายไป (ชิ้น)'],
+                    datasets: [{
+                        label: 'สรุปผลประกอบการยอดขาย',
+                        data: [salesRevenue, profit, qtySold],
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.85)',
+                            'rgba(16, 185, 129, 0.85)',
+                            'rgba(245, 158, 11, 0.85)'
+                        ],
+                        borderColor: [
+                            '#6366f1',
+                            '#10b981',
+                            '#f59e0b'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        borderSkipped: false,
+                        barThickness: window.innerWidth < 640 ? 30 : 55
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw || 0;
+                                    if (context.dataIndex === 2) {
+                                        return `จำนวน: ${val.toLocaleString()} ชิ้น`;
+                                    }
+                                    return `จำนวนเงิน: ${val.toLocaleString()} บาท`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8', font: { family: 'Prompt', size: 12 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { family: 'Prompt', size: 11 },
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function handleSearchInventory(query) {
+            const cleanQuery = query.toLowerCase().trim();
+            if (!cleanQuery) {
+                renderInventoryCards(globalComputersData);
+                return;
+            }
+            const filtered = globalComputersData.filter(item => 
+                (item.name && item.name.toLowerCase().includes(cleanQuery)) ||
+                (item.brand && item.brand.toLowerCase().includes(cleanQuery))
+            );
+            renderInventoryCards(filtered);
+        }
+
+        function renderInventoryCards(items) {
+            const container = document.getElementById('admin-inventory-list');
+            container.innerHTML = '';
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-16 text-center bg-slate-900/40 border border-slate-800 rounded-3xl">
+                        <svg class="w-16 h-16 mx-auto text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                        <p class="text-slate-400 font-medium">ไม่พบรายการสินค้าในระบบ</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const isAdmin = currentUserRole === 'admin';
+
+            items.forEach(item => {
+                const images = item.images && item.images.length > 0 ? item.images : ['https://via.placeholder.com/400x300?text=No+Image'];
+                const stockNum = Number(item.stock || 0);
+
+                let stockBadgeClass = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+                let stockText = "มีสินค้า";
+                if (stockNum === 0) {
+                    stockBadgeClass = "bg-rose-500/20 text-rose-400 border-rose-500/30";
+                    stockText = "หมดสต็อก";
+                } else if (stockNum < 5) {
+                    stockBadgeClass = "bg-amber-500/20 text-amber-400 border-amber-500/30";
+                    stockText = "สต็อกเหลือน้อย";
+                }
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between hover:border-indigo-500/40 transition shadow-lg';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="relative overflow-hidden rounded-xl bg-slate-950 h-48 mb-3">
+                            <img id="main-img-${item.id}" src="${images[0]}" class="w-full h-full object-cover">
+                            <span class="absolute top-2 right-2 bg-slate-950/80 text-xs px-2.5 py-1 rounded-full border border-slate-800 text-indigo-400 font-medium">${item.brand}</span>
+                            <span class="absolute bottom-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-md border ${stockBadgeClass}">${stockText}</span>
+                        </div>
+                        <div class="flex space-x-2 overflow-x-auto mb-3 pb-1">
+                            ${images.map((img) => `
+                                <img src="${img}" onclick="document.getElementById('main-img-${item.id}').src='${img}'" class="w-10 h-10 object-cover rounded-lg border border-slate-800 cursor-pointer hover:border-indigo-500 transition">
+                            `).join('')}
+                        </div>
+
+                        <h3 class="font-bold text-white text-base mb-1">${item.name}</h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mb-3">
+                            ${isAdmin ? `<div><span class="text-slate-500">ทุน:</span> <span class="text-rose-400 font-bold">${Number(item.cost_price || 0).toLocaleString()} ฿</span></div>` : ''}
+                            <div><span class="text-slate-500">ราคาขาย:</span> <span class="text-emerald-400 font-bold">${Number(item.price || 0).toLocaleString()} ฿</span></div>
+                            <div><span class="text-slate-500">คงเหลือ:</span> <span class="text-amber-400 font-bold">${stockNum} ชิ้น</span></div>
+                            ${isAdmin ? `<div><span class="text-slate-500">กำไรคาดการณ์:</span> <span class="text-indigo-400 font-bold">${(Number(item.price || 0) - Number(item.cost_price || 0)).toLocaleString()} ฿</span></div>` : ''}
+                        </div>
+                    </div>
+
+                    ${isAdmin ? `
+                        <div class="flex space-x-2 mt-2">
+                            <button onclick="handleAdjustStockModal('${item.id}')" class="w-1/2 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded-xl text-xs font-semibold transition focus:outline-none">ปรับสต็อก เข้า/ออก</button>
+                            <button onclick="handleDelete('${item.id}')" class="w-1/2 py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-semibold transition focus:outline-none">ลบสินค้า</button>
+                        </div>
+                    ` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function calculateStats(items) {
+            let totalStock = 0, totalCost = 0, totalPrice = 0;
+            items.forEach(i => {
+                const stock = Number(i.stock || 0);
+                totalStock += stock;
+                totalCost += Number(i.cost_price || 0) * stock;
+                totalPrice += Number(i.price || 0) * stock;
+            });
+            document.getElementById('stat-count').innerText = items.length;
+            document.getElementById('stat-total-stock').innerText = `${totalStock.toLocaleString()} ชิ้น`;
+            document.getElementById('stat-cost-total').innerText = `${totalCost.toLocaleString()} ฿`;
+            document.getElementById('stat-price-total').innerText = `${totalPrice.toLocaleString()} ฿`;
+        }
+
+        function addBatchRow() {
+            const container = document.getElementById('batch-items-container');
+            const rowId = batchItemIndex++;
+            
+            const card = document.createElement('div');
+            card.id = `batch-row-${rowId}`;
+            card.className = 'bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 relative group hover:border-indigo-500/40 transition shadow-xl';
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                        <span>รายการสินค้า #${container.children.length + 1}</span>
+                    </span>
+                    <button type="button" onclick="removeBatchRow('${rowId}')" class="text-xs text-rose-400 hover:text-rose-300 font-semibold transition bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-500/20 focus:outline-none">
+                        ✕ ลบช่องนี้
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">ชื่อรุ่น / สเปกคอมพิวเตอร์ *</label>
+                        <input type="text" name="items[${rowId}][name]" placeholder="เช่น ASUS ROG Strix G16" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">แบรนด์ *</label>
+                        <input type="text" name="items[${rowId}][brand]" placeholder="เช่น ASUS, Apple, Dell" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-slate-100">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">จำนวนสินค้าเริ่มต้น (ชิ้น) *</label>
+                        <input type="number" name="items[${rowId}][stock]" min="1" value="1" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-amber-400 font-bold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">ราคาทุน (บาท) *</label>
+                        <input type="number" name="items[${rowId}][cost_price]" placeholder="0" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-rose-500 text-xs sm:text-sm text-rose-400 font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">ราคาขาย (บาท) *</label>
+                        <input type="number" name="items[${rowId}][price]" placeholder="0" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-emerald-500 text-xs sm:text-sm text-emerald-400 font-bold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-2">รูปภาพสินค้า (อัปโหลดได้หลายรูปประจำรายการนี้):</label>
+                    <input type="file" name="items[${rowId}][images]" accept="image/*" multiple required onchange="previewBatchRowImages(event, '${rowId}')" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-indigo-600 file:text-white cursor-pointer">
+                    <div id="batch-preview-${rowId}" class="flex flex-wrap gap-2 mt-3 hidden"></div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+            updateBatchTotalBadge();
+        }
+
+        function removeBatchRow(rowId) {
+            const container = document.getElementById('batch-items-container');
+            if (container.children.length <= 1) {
+                notifyError('ไม่สามารถลบได้', 'ต้องมีช่องใส่สินค้าอย่างน้อย 1 รายการ');
+                return;
+            }
+            const row = document.getElementById(`batch-row-${rowId}`);
+            if (row) row.remove();
+            updateBatchTotalBadge();
+        }
+
+        function updateBatchTotalBadge() {
+            const count = document.getElementById('batch-items-container').children.length;
+            document.getElementById('batch-total-count-badge').innerText = count;
+        }
+
+        function previewBatchRowImages(event, rowId) {
+            const previewContainer = document.getElementById(`batch-preview-${rowId}`);
+            previewContainer.innerHTML = '';
+            const files = event.target.files;
+
+            if (files.length > 0) {
+                previewContainer.classList.remove('hidden');
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'w-12 h-12 object-cover rounded-lg border border-indigo-500/40 shadow';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+        }
+
+        async function handleBatchSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const container = document.getElementById('batch-items-container');
+            
+            formData.append('total_items', container.children.length);
+
+            showLoading('กำลังอัปโหลดรูปภาพและบันทึกสินค้าทั้งหมด...');
+            try {
+                const res = await fetch('/api/computers/batch', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.message);
+
+                notifySuccess('บันทึกสำเร็จ!', `บันทึกสินค้าเข้าคลังจำนวน ${result.count} รายการเรียบร้อยแล้ว`);
+                
+                container.innerHTML = '';
+                batchItemIndex = 0;
+                addBatchRow();
+                
+                loadInventory();
+                switchRoute('inventory');
+            } catch (err) {
+                notifyError('บันทึกไม่สำเร็จ', err.message);
+            }
+        }
+
+        async function handleAdjustStockModal(compId) {
+            const { value: formValues } = await Swal.fire({
+                title: 'ปรับสต็อกเข้า-ออกสินค้า (Stock IN / OUT)',
+                background: '#0f172a',
+                color: '#f8fafc',
+                html: `
+                    <select id="swal-type" class="w-full mb-3 p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm">
+                        <option value="IN">📥 สินค้าเข้า (+ Stock IN)</option>
+                        <option value="OUT">📤 สินค้าออก (- Stock OUT)</option>
+                    </select>
+                    <input id="swal-qty" type="number" min="1" placeholder="จำนวนสินค้า (ชิ้น)" class="w-full mb-3 p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm">
+                    <input id="swal-note" type="text" placeholder="หมายเหตุ (เช่น เติมสต็อกรอบเดือน / ตัดขายล็อตใหญ่)" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm">
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'บันทึกการปรับสต็อก',
+                cancelButtonText: 'ยกเลิก',
+                preConfirm: () => {
+                    return {
+                        type: document.getElementById('swal-type').value,
+                        quantity: Number(document.getElementById('swal-qty').value),
+                        note: document.getElementById('swal-note').value
+                    }
+                }
+            });
+
+            if (formValues) {
+                if (!formValues.quantity || formValues.quantity <= 0) {
+                    notifyError('ข้อมูลไม่ถูกต้อง', 'กรุณาระบุจำนวนสินค้ามากกว่า 0');
+                    return;
+                }
+
+                showLoading('กำลังปรับปรุงสต็อก...');
+                try {
+                    const res = await fetch(`/api/computers/${compId}/stock`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formValues)
+                    });
+                    const result = await res.json();
+                    if (!res.ok) throw new Error(result.message);
+
+                    notifySuccess('ปรับสต็อกสำเร็จ', `จำนวนคงเหลือใหม่: ${result.data.new_stock} ชิ้น`);
+                    loadInventory();
+                } catch (err) {
+                    notifyError('ปรับสต็อกไม่สำเร็จ', err.message);
+                }
+            }
+        }
+
+        function renderGlobalStockLogs() {
+            const container = document.getElementById('global-stock-logs-table');
+            container.innerHTML = '';
+
+            let allLogs = [];
+            globalComputersData.forEach(comp => {
+                if (comp.logs) {
+                    comp.logs.forEach(log => {
+                        allLogs.push({ ...log, comp_name: comp.name, comp_brand: comp.brand });
+                    });
+                }
+            });
+
+            allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            if (allLogs.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-500 py-8 text-sm">ยังไม่มีประวัติการเข้า-ออกสินค้า</p>';
+                return;
+            }
+
+            allLogs.forEach(log => {
+                const isIN = log.type === 'IN';
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-xs';
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="px-2.5 py-1 rounded-full font-bold ${isIN ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+                            ${isIN ? '📥 เข้า (IN)' : '📤 ออก (OUT)'}
+                        </span>
+                        <div>
+                            <p class="font-bold text-white">${log.comp_name} (${log.comp_brand})</p>
+                            <p class="text-slate-400 text-[11px]">${log.note || '-'}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold ${isIN ? 'text-emerald-400' : 'text-rose-400'} text-sm">${isIN ? '+' : '-'}${log.quantity} ชิ้น</p>
+                        <p class="text-slate-500 text-[10px]">⏰ ${log.timestamp} | โดย ${log.by}</p>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function handleDelete(id) {
+            const confirm = await Swal.fire({
+                title: 'ยืนยันการลบสินค้า?',
+                text: "รายการและประวัติสินค้าจะถูกลบออกจากคลัง",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ลบรายการ',
+                cancelButtonText: 'ยกเลิก',
+                background: '#0f172a',
+                color: '#f8fafc',
+                confirmButtonColor: '#ef4444'
+            });
+
+            if (confirm.isConfirmed) {
+                showLoading('กำลังลบสินค้า...');
+                try {
+                    const res = await fetch(`/api/computers/${id}`, { method: 'DELETE' });
+                    if (!res.ok) throw new Error('ไม่สามารถลบได้');
+                    notifySuccess('สำเร็จ', 'ลบสินค้าเรียบร้อยแล้ว');
+                    loadInventory();
+                } catch (err) {
+                    notifyError('ลบล้มเหลว', err.message);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
