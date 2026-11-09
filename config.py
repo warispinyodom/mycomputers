@@ -10,6 +10,8 @@ class Config:
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET", "portfolio-images")
     SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    OMISE_PUBLIC_KEY = os.getenv('OMISE_PUBLIC_KEY', '')
+    OMISE_SECRET_KEY = os.getenv('OMISE_SECRET_KEY', '')
     
     @staticmethod
     def get_firebase_credentials():
