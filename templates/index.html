@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="h-full bg-slate-950">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MyComputers - Management System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,55 +18,63 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <style>
+        /* Smooth Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
 </head>
 
-<body
-    class="bg-slate-950 min-h-screen text-slate-100 font-sans antialiased flex overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 min-h-screen text-slate-100 font-sans antialiased flex flex-col md:flex-row overflow-x-hidden selection:bg-indigo-500 selection:text-white">
 
     <!-- Mobile Sidebar Backdrop Overlay -->
     <div id="sidebar-backdrop" onclick="toggleSidebar()"
-        class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 hidden md:hidden transition-opacity opacity-0 duration-300"></div>
 
     <!-- Left Sidebar Navigation Menu -->
     <aside id="main-sidebar"
-        class="hidden fixed md:sticky top-0 left-0 h-screen w-64 bg-slate-900/95 border-r border-slate-800/80 z-50 flex-col justify-between transition-all duration-300 transform -translate-x-full md:translate-x-0 shrink-0">
-        <div>
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/95 backdrop-blur-xl border-r border-slate-800/80 flex flex-col justify-between transition-all duration-300 transform -translate-x-full md:translate-x-0 md:sticky md:top-0 md:h-screen md:shrink-0 hidden">
+        <div class="flex flex-col h-full overflow-y-auto">
             <!-- Sidebar Header / Brand Logo -->
-            <div class="h-20 px-6 flex items-center justify-between border-b border-slate-800/80">
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="location.reload()">
-                    <div
-                        class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-2xl shadow-lg shadow-indigo-500/25 text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="h-16 sm:h-20 px-5 flex items-center justify-between border-b border-slate-800/80 shrink-0">
+                <div class="flex items-center space-x-3 cursor-pointer min-w-0" onclick="location.reload()">
+                    <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2 sm:p-2.5 rounded-2xl shadow-lg shadow-indigo-500/25 text-white shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                             </path>
                         </svg>
                     </div>
-                    <div id="sidebar-logo-text">
-                        <h1
-                            class="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent tracking-tight">
+                    <div id="sidebar-logo-text" class="truncate">
+                        <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent tracking-tight truncate">
                             MyComputers</h1>
                         <span id="role-badge"
-                            class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/80">User</span>
+                            class="inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/80">User</span>
                     </div>
                 </div>
 
+                <!-- Desktop Collapse Button -->
                 <button onclick="toggleSidebar()"
                     class="hidden md:flex text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800/80 transition focus:outline-none">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
                     </svg>
+                </button>
+                <!-- Mobile Close Button -->
+                <button onclick="toggleSidebar()" class="flex md:hidden text-slate-400 hover:text-white p-1.5 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
             <!-- Navigation Links -->
-            <div id="sidebar-menu-links" class="p-4 space-y-2">
+            <div id="sidebar-menu-links" class="p-3 sm:p-4 space-y-1.5 flex-1 overflow-y-auto">
                 <p class="sidebar-text text-[10px] uppercase font-bold tracking-wider text-slate-500 px-3 mb-2">
                     เมนูการใช้งาน</p>
 
                 <button id="menu-inventory" onclick="switchRoute('inventory')"
-                    class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                    class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
@@ -76,7 +84,7 @@
 
                 <!-- Order Tracking Menu -->
                 <button id="menu-my-orders" onclick="switchRoute('my-orders')"
-                    class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                    class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
                     <svg class="w-5 h-5 shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
@@ -86,31 +94,31 @@
                 </button>
 
                 <!-- Admin Only Routes -->
-                <div id="admin-sidebar-menu" class="space-y-2 hidden">
+                <div id="admin-sidebar-menu" class="space-y-1.5 hidden">
                     <button id="menu-batch-add" onclick="switchRoute('batch-add')"
-                        class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                        <svg class="w-5 h-5 shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
-                        <span class="sidebar-text truncate">⚡ เพิ่มหลายรายการ (Batch Add)</span>
+                        <span class="sidebar-text truncate">⚡ เพิ่มหลายรายการ (Batch)</span>
                     </button>
 
                     <button id="menu-stock-logs" onclick="switchRoute('stock-logs')"
-                        class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                        <svg class="w-5 h-5 shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
                             </path>
                         </svg>
-                        <span class="sidebar-text truncate">📋 ประวัติเวลาเข้า-ออกสินค้า</span>
+                        <span class="sidebar-text truncate">📋 ประวัติเข้า-ออกสินค้า</span>
                     </button>
                 </div>
 
                 <!-- Account & Security Settings Menu -->
                 <button id="menu-settings" onclick="switchRoute('settings')"
-                    class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
-                    <svg class="w-5 h-5 shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none">
+                    <svg class="w-5 h-5 shrink-0 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
                         </path>
@@ -118,17 +126,17 @@
                     <span class="sidebar-text truncate">⚙️ ข้อมูลส่วนตัวและความปลอดภัย</span>
                 </button>
             </div>
-        </div>
 
-        <!-- Sidebar User Profile Footer -->
-        <div id="sidebar-user-footer" class="p-4 border-t border-slate-800/80 hidden">
-            <div onclick="switchRoute('settings')"
-                class="flex items-center space-x-3 bg-slate-950/80 p-3 rounded-2xl border border-slate-800/80 cursor-pointer hover:border-indigo-500/40 transition">
-                <img id="sidebar-user-avatar"
-                    class="w-8 h-8 rounded-full border border-indigo-500/40 object-cover hidden" alt="Avatar">
-                <div class="sidebar-text min-w-0 flex-1">
-                    <p id="sidebar-user-email" class="text-xs font-medium text-slate-200 truncate"></p>
-                    <p id="sidebar-user-role" class="text-[10px] text-indigo-400 capitalize font-semibold"></p>
+            <!-- Sidebar User Profile Footer -->
+            <div id="sidebar-user-footer" class="p-4 border-t border-slate-800/80 hidden shrink-0">
+                <div onclick="switchRoute('settings')"
+                    class="flex items-center space-x-3 bg-slate-950/80 p-2.5 sm:p-3 rounded-2xl border border-slate-800/80 cursor-pointer hover:border-indigo-500/40 transition">
+                    <img id="sidebar-user-avatar"
+                        class="w-8 h-8 rounded-full border border-indigo-500/40 object-cover hidden" alt="Avatar">
+                    <div class="sidebar-text min-w-0 flex-1">
+                        <p id="sidebar-user-email" class="text-xs font-medium text-slate-200 truncate"></p>
+                        <p id="sidebar-user-role" class="text-[10px] text-indigo-400 capitalize font-semibold"></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -139,48 +147,46 @@
 
         <!-- Header Bar -->
         <header id="main-header"
-            class="hidden bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-30 h-20 px-4 sm:px-6 justify-between items-center gap-4">
-            <div class="flex items-center space-x-4">
+            class="hidden bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-30 h-16 sm:h-20 px-3 sm:px-6 justify-between items-center gap-2 sm:gap-4">
+            <div class="flex items-center space-x-2 sm:space-x-4 shrink-0">
                 <button onclick="toggleSidebar()"
-                    class="p-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700/60 transition focus:outline-none">
+                    class="p-2 sm:p-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700/60 transition focus:outline-none">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
-                <h2 id="page-title" class="text-base font-bold text-white hidden sm:block">รายการสินค้า</h2>
+                <h2 id="page-title" class="text-sm sm:text-base font-bold text-white truncate max-w-[120px] sm:max-w-none">รายการสินค้า</h2>
             </div>
 
             <!-- Search Bar -->
-            <div id="nav-search-box" class="flex-1 max-w-xs sm:max-w-md">
+            <div id="nav-search-box" class="flex-1 max-w-xs sm:max-w-md mx-2">
                 <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </span>
                     <input type="text" id="inventory-search-input" oninput="handleSearchInventory(this.value)"
-                        placeholder="ค้นหาชื่อรุ่น หรือแบรนด์..."
-                        class="w-full pl-10 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-xs sm:text-sm text-slate-200 placeholder-slate-500 transition">
+                        placeholder="ค้นหาชื่อรุ่น / แบรนด์..."
+                        class="w-full pl-9 pr-3 py-1.5 sm:py-2 bg-slate-950/80 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-xs sm:text-sm text-slate-200 placeholder-slate-500 transition">
                 </div>
             </div>
 
             <!-- Shopping Cart & Logout Button Header -->
-            <div id="nav-user-header" class="flex items-center space-x-3">
+            <div id="nav-user-header" class="flex items-center space-x-2 sm:space-x-3 shrink-0">
                 <button id="btn-header-cart" onclick="toggleCartDrawer()"
-                    class="relative p-2.5 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded-xl transition focus:outline-none flex items-center justify-center">
+                    class="relative p-2 sm:p-2.5 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded-xl transition focus:outline-none flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z">
                         </path>
                     </svg>
                     <span id="cart-badge"
-                        class="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow hidden">0</span>
+                        class="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow hidden">0</span>
                 </button>
 
                 <button onclick="handleLogout()"
-                    class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs sm:text-sm px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5 focus:outline-none">
+                    class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs sm:text-sm px-2.5 sm:px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5 focus:outline-none">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
@@ -191,75 +197,68 @@
             </div>
         </header>
 
-        <!-- Main Workspace -->
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col justify-center">
+        <!-- Main Workspace Body -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-8 flex flex-col justify-start">
 
             <!-- Auth Screen -->
-            <div id="view-auth" class="w-full max-w-md mx-auto my-auto py-6">
-                <div class="text-center mb-8">
-                    <div
-                        class="inline-flex bg-gradient-to-tr from-indigo-600 to-violet-500 p-3.5 rounded-3xl shadow-xl shadow-indigo-500/30 text-white mb-3">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="view-auth" class="w-full max-w-md mx-auto my-auto py-4 sm:py-6">
+                <div class="text-center mb-6 sm:mb-8">
+                    <div class="inline-flex bg-gradient-to-tr from-indigo-600 to-violet-500 p-3 sm:p-3.5 rounded-3xl shadow-xl shadow-indigo-500/30 text-white mb-3">
+                        <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                             </path>
                         </svg>
                     </div>
-                    <h1
-                        class="text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
+                    <h1 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
                         MyComputers</h1>
                     <p class="text-xs text-slate-400 mt-1">ระบบบริหารจัดการและสั่งซื้อสินค้าคอมพิวเตอร์</p>
                 </div>
 
-                <div
-                    class="bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 p-5 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
                     <div class="flex bg-slate-950 p-1.5 rounded-2xl mb-6 border border-slate-800">
                         <button id="tab-login-btn" onclick="switchAuthTab('login')"
-                            class="w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 focus:outline-none">เข้าสู่ระบบ</button>
+                            class="w-1/2 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 focus:outline-none">เข้าสู่ระบบ</button>
                         <button id="tab-register-btn" onclick="switchAuthTab('register')"
-                            class="w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 text-slate-400 hover:text-white focus:outline-none">ลงทะเบียน</button>
+                            class="w-1/2 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition duration-200 text-slate-400 hover:text-white focus:outline-none">ลงทะเบียน</button>
                     </div>
 
                     <!-- Login Form -->
                     <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
                         <div>
-                            <label
-                                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">อีเมล</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">อีเมล</label>
                             <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207">
                                         </path>
                                     </svg>
                                 </span>
                                 <input type="email" id="login-email" placeholder="example@domain.com" required
-                                    class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                                    class="w-full pl-10 sm:pl-11 pr-4 py-2.5 sm:py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-xs sm:text-sm text-slate-100 placeholder-slate-500 transition">
                             </div>
                         </div>
                         <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <label
-                                    class="text-xs font-semibold uppercase tracking-wider text-slate-400">รหัสผ่าน</label>
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">รหัสผ่าน</label>
                                 <button type="button" onclick="handleForgotPassword()"
                                     class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">ลืมรหัสผ่าน?</button>
                             </div>
                             <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
                                         </path>
                                     </svg>
                                 </span>
                                 <input type="password" id="login-password" placeholder="••••••••" required
-                                    class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                                    class="w-full pl-10 sm:pl-11 pr-4 py-2.5 sm:py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-xs sm:text-sm text-slate-100 placeholder-slate-500 transition">
                             </div>
                         </div>
                         <button type="submit"
-                            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-semibold transition duration-200 shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 focus:outline-none">
+                            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-semibold text-xs sm:text-sm transition duration-200 shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 focus:outline-none">
                             <span>เข้าสู่ระบบ</span>
                         </button>
                     </form>
@@ -267,63 +266,53 @@
                     <!-- Register Form -->
                     <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
                         <div>
-                            <label
-                                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">อีเมล</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">อีเมล</label>
                             <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207">
                                         </path>
                                     </svg>
                                 </span>
                                 <input type="email" id="reg-email" placeholder="example@domain.com" required
-                                    class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                                    class="w-full pl-10 sm:pl-11 pr-4 py-2.5 sm:py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm text-slate-100 placeholder-slate-500 transition">
                             </div>
                         </div>
                         <div>
-                            <label
-                                class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">รหัสผ่าน
-                                (อย่างน้อย 6 ตัวอักษร)</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label>
                             <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
                                         </path>
                                     </svg>
                                 </span>
                                 <input type="password" id="reg-password" placeholder="••••••••" required minlength="6"
-                                    class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm text-slate-100 placeholder-slate-500 transition">
+                                    class="w-full pl-10 sm:pl-11 pr-4 py-2.5 sm:py-3 bg-slate-950 border border-slate-800 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm text-slate-100 placeholder-slate-500 transition">
                             </div>
                         </div>
                         <button type="submit"
-                            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-semibold transition duration-200 shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 focus:outline-none">
+                            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-semibold text-xs sm:text-sm transition duration-200 shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 focus:outline-none">
                             <span>สมัครสมาชิก & ส่งอีเมลยืนยัน</span>
                         </button>
                     </form>
 
-                    <div class="relative my-6">
+                    <div class="relative my-5 sm:my-6">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-slate-800"></div>
                         </div>
-                        <div class="relative flex justify-center text-xs uppercase"><span
-                                class="bg-slate-900 px-3 text-slate-500">หรือ</span></div>
+                        <div class="relative flex justify-center text-xs uppercase"><span class="bg-slate-900 px-3 text-slate-500">หรือ</span></div>
                     </div>
 
                     <button type="button" onclick="handleGoogleLogin()"
-                        class="w-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-200 font-medium py-3 px-4 rounded-xl transition flex items-center justify-center space-x-3 group focus:outline-none">
-                        <svg class="w-5 h-5 group-hover:scale-110 transition" viewBox="0 0 24 24">
-                            <path fill="#4285F4"
-                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                            <path fill="#34A853"
-                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                            <path fill="#FBBC05"
-                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                            <path fill="#EA4335"
-                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                        class="w-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-200 font-medium py-2.5 sm:py-3 px-4 rounded-xl transition flex items-center justify-center space-x-3 text-xs sm:text-sm focus:outline-none">
+                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                         </svg>
                         <span>เข้าสู่ระบบด้วย Google</span>
                     </button>
@@ -331,36 +320,34 @@
             </div>
 
             <!-- Route 1: Inventory / Store View -->
-            <div id="route-admin-inventory" class="hidden space-y-8 my-auto">
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                    <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
-                        <p class="text-xs text-slate-400 font-medium">รายการสินค้าทั้งหมด</p>
-                        <p id="stat-count" class="text-2xl font-bold text-white mt-1">0</p>
+            <div id="route-admin-inventory" class="hidden space-y-6 sm:space-y-8 w-full">
+                <!-- Stat Cards Grid (Mobile 2x2, Desktop 4x1) -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-slate-900/60 border border-slate-800 p-3.5 sm:p-5 rounded-2xl">
+                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">รายการสินค้าทั้งหมด</p>
+                        <p id="stat-count" class="text-xl sm:text-2xl font-bold text-white mt-1">0</p>
                     </div>
-                    <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
-                        <p class="text-xs text-slate-400 font-medium">จำนวนสินค้าในสต็อกรวม</p>
-                        <p id="stat-total-stock" class="text-2xl font-bold text-amber-400 mt-1">0 ชิ้น</p>
+                    <div class="bg-slate-900/60 border border-slate-800 p-3.5 sm:p-5 rounded-2xl">
+                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">สินค้าในสต็อกรวม</p>
+                        <p id="stat-total-stock" class="text-xl sm:text-2xl font-bold text-amber-400 mt-1">0 ชิ้น</p>
                     </div>
-                    <div id="stat-cost-card" class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
-                        <p class="text-xs text-slate-400 font-medium">มูลค่าราคาทุนรวม</p>
-                        <p id="stat-cost-total" class="text-2xl font-bold text-rose-400 mt-1">0 ฿</p>
+                    <div id="stat-cost-card" class="bg-slate-900/60 border border-slate-800 p-3.5 sm:p-5 rounded-2xl">
+                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">มูลค่าราคาทุนรวม</p>
+                        <p id="stat-cost-total" class="text-xl sm:text-2xl font-bold text-rose-400 mt-1 truncate">0 ฿</p>
                     </div>
-                    <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
-                        <p class="text-xs text-slate-400 font-medium">มูลค่าราคาขายรวม</p>
-                        <p id="stat-price-total" class="text-2xl font-bold text-emerald-400 mt-1">0 ฿</p>
+                    <div class="bg-slate-900/60 border border-slate-800 p-3.5 sm:p-5 rounded-2xl">
+                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">มูลค่าราคาขายรวม</p>
+                        <p id="stat-price-total" class="text-xl sm:text-2xl font-bold text-emerald-400 mt-1 truncate">0 ฿</p>
                     </div>
                 </div>
 
                 <!-- Sales Analytics Bar Chart Section (Admin Only) -->
-                <div id="admin-sales-analytics"
-                    class="bg-slate-900/80 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-6 hidden">
-                    <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-4">
+                <div id="admin-sales-analytics" class="bg-slate-900/80 border border-slate-800 p-4 sm:p-6 rounded-3xl shadow-xl space-y-4 sm:space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
                         <div>
-                            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-                                <span
-                                    class="bg-indigo-500/20 text-indigo-400 p-1.5 rounded-lg border border-indigo-500/30">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
+                                <span class="bg-indigo-500/20 text-indigo-400 p-1.5 rounded-lg border border-indigo-500/30">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
                                         </path>
@@ -368,81 +355,74 @@
                                 </span>
                                 <span>รายงานยอดขายและวิเคราะห์ผลตอบแทน</span>
                             </h2>
-                            <p class="text-xs text-slate-400 mt-1">คำนวณจากประวัติการตัดขายสินค้าออก (Stock OUT)</p>
+                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">คำนวณจากประวัติการตัดขายสินค้าออก (Stock OUT)</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-slate-950 p-4 rounded-2xl border border-indigo-500/20">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                        <div class="bg-slate-950 p-3.5 sm:p-4 rounded-2xl border border-indigo-500/20">
                             <p class="text-xs text-slate-400 font-medium">💰 ยอดขาย รวมทั้งหมด</p>
-                            <p id="stat-sales-revenue" class="text-xl font-bold text-indigo-400 mt-1">0 ฿</p>
+                            <p id="stat-sales-revenue" class="text-lg sm:text-xl font-bold text-indigo-400 mt-1">0 ฿</p>
                         </div>
-                        <div class="bg-slate-950 p-4 rounded-2xl border border-emerald-500/20">
+                        <div class="bg-slate-950 p-3.5 sm:p-4 rounded-2xl border border-emerald-500/20">
                             <p class="text-xs text-slate-400 font-medium">📈 กำไรทั้งหมด (หักลบทุน)</p>
-                            <p id="stat-sales-profit" class="text-xl font-bold text-emerald-400 mt-1">0 ฿</p>
+                            <p id="stat-sales-profit" class="text-lg sm:text-xl font-bold text-emerald-400 mt-1">0 ฿</p>
                         </div>
-                        <div class="bg-slate-950 p-4 rounded-2xl border border-amber-500/20">
+                        <div class="bg-slate-950 p-3.5 sm:p-4 rounded-2xl border border-amber-500/20">
                             <p class="text-xs text-slate-400 font-medium">📦 จำนวนสินค้าที่ขายไป</p>
-                            <p id="stat-sales-qty" class="text-xl font-bold text-amber-400 mt-1">0 ชิ้น</p>
+                            <p id="stat-sales-qty" class="text-lg sm:text-xl font-bold text-amber-400 mt-1">0 ชิ้น</p>
                         </div>
                     </div>
 
-                    <div class="relative w-full h-72 sm:h-80 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                    <div class="relative w-full h-64 sm:h-80 bg-slate-950/60 p-2 sm:p-4 rounded-2xl border border-slate-800">
                         <canvas id="salesAnalyticsChart"></canvas>
                     </div>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-4">
-                        <h3 id="inventory-section-title" class="text-lg font-bold text-white">รายการสินค้า</h3>
+                        <h3 id="inventory-section-title" class="text-base sm:text-lg font-bold text-white">รายการสินค้า</h3>
                     </div>
-                    <div id="admin-inventory-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                    <!-- Inventory Items Responsive Grid -->
+                    <div id="admin-inventory-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"></div>
                 </div>
             </div>
 
             <!-- Route 2: Batch Add Multiple Items System -->
-            <div id="route-admin-batch-add" class="hidden space-y-6 my-auto">
-                <div
-                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-6 rounded-3xl">
+            <div id="route-admin-batch-add" class="hidden space-y-6 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-4 sm:p-6 rounded-3xl">
                     <div>
-                        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-                            <span
-                                class="bg-emerald-500/20 text-emerald-400 p-1.5 rounded-lg border border-emerald-500/30">
+                        <h2 class="text-lg sm:text-xl font-bold text-white flex items-center space-x-2">
+                            <span class="bg-emerald-500/20 text-emerald-400 p-1.5 rounded-lg border border-emerald-500/30">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                 </svg>
                             </span>
-                            <span>ระบบเพิ่มสินค้าหลายรายการพร้อมกัน (Batch Add)</span>
+                            <span>ระบบเพิ่มสินค้าหลายรายการ (Batch Add)</span>
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">
-                            กรอกข้อมูลสินค้าและเลือกรูปภาพหลายรายการพร้อมกันแล้วกดบันทึกในครั้งเดียว</p>
+                        <p class="text-xs text-slate-400 mt-1">กรอกข้อมูลและเลือกรูปภาพหลายรายการพร้อมกันแล้วกดบันทึกในครั้งเดียว</p>
                     </div>
 
                     <button type="button" onclick="addBatchRow()"
-                        class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-xs transition shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 focus:outline-none">
+                        class="w-full sm:w-auto px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-xs transition shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 focus:outline-none">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                         <span>+ เพิ่มช่องสินค้าใหม่</span>
                     </button>
                 </div>
 
-                <form id="form-batch-add" onsubmit="handleBatchSubmit(event)" class="space-y-6">
-                    <div id="batch-items-container" class="space-y-6"></div>
+                <form id="form-batch-add" onsubmit="handleBatchSubmit(event)" class="space-y-4 sm:space-y-6">
+                    <div id="batch-items-container" class="space-y-4 sm:space-y-6"></div>
 
-                    <div
-                        class="bg-slate-900/80 border border-slate-800 p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div class="text-xs text-slate-400">
-                            จำนวนรายการที่จะบันทึก: <span id="batch-total-count-badge"
-                                class="font-bold text-indigo-400 text-sm">1</span> รายการ
+                    <div class="bg-slate-900/80 border border-slate-800 p-4 sm:p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="text-xs text-slate-400 text-center sm:text-left">
+                            จำนวนรายการที่จะบันทึก: <span id="batch-total-count-badge" class="font-bold text-indigo-400 text-sm">1</span> รายการ
                         </div>
                         <button type="submit"
-                            class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition shadow-lg shadow-emerald-600/30 focus:outline-none flex items-center justify-center space-x-2">
+                            class="w-full sm:w-auto px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs sm:text-sm transition shadow-lg shadow-emerald-600/30 focus:outline-none flex items-center justify-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                             <span>บันทึกสินค้าทั้งหมดเข้าคลัง</span>
                         </button>
@@ -451,37 +431,34 @@
             </div>
 
             <!-- Route 3: Stock In/Out Logs Timeline -->
-            <div id="route-admin-stock-logs" class="hidden space-y-6 my-auto">
-                <h2 class="text-xl font-bold text-white">📋 ประวัติเวลาเข้า-ออกสินค้าทั้งหมด</h2>
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden p-4">
-                    <div id="global-stock-logs-table" class="space-y-3"></div>
+            <div id="route-admin-stock-logs" class="hidden space-y-4 sm:space-y-6 w-full">
+                <h2 class="text-lg sm:text-xl font-bold text-white">📋 ประวัติเวลาเข้า-ออกสินค้าทั้งหมด</h2>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden p-3 sm:p-4">
+                    <div id="global-stock-logs-table" class="space-y-2.5"></div>
                 </div>
             </div>
 
             <!-- Route 4: Account & Security Settings Dashboard -->
-            <div id="route-user-settings" class="hidden space-y-8 my-auto max-w-4xl mx-auto w-full">
+            <div id="route-user-settings" class="hidden space-y-6 sm:space-y-8 max-w-4xl mx-auto w-full">
                 <!-- User Profile Overview Card -->
-                <div
-                    class="bg-slate-900/90 border border-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
+                <div class="bg-slate-900/90 border border-slate-800 p-5 sm:p-8 rounded-3xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+                    <div class="flex items-center space-x-4 w-full sm:w-auto">
+                        <div class="relative shrink-0">
                             <img id="settings-user-avatar"
-                                class="w-16 h-16 rounded-2xl border-2 border-indigo-500/50 object-cover bg-slate-950 p-1"
+                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-indigo-500/50 object-cover bg-slate-950 p-1"
                                 src="https://via.placeholder.com/150?text=User" alt="Avatar">
                             <span id="settings-user-badge"
                                 class="absolute -bottom-1 -right-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-600 text-white shadow">User</span>
                         </div>
-                        <div>
-                            <h3 id="settings-user-email-display" class="text-lg font-bold text-white">user@domain.com
-                            </h3>
-                            <p class="text-xs text-slate-400 mt-0.5">สถานะบัญชี: <span id="settings-user-status"
-                                    class="text-emerald-400 font-semibold">ยืนยันแล้ว ✔</span></p>
+                        <div class="min-w-0 flex-1">
+                            <h3 id="settings-user-email-display" class="text-base sm:text-lg font-bold text-white truncate">user@domain.com</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">สถานะบัญชี: <span id="settings-user-status" class="text-emerald-400 font-semibold">ยืนยันแล้ว ✔</span></p>
                         </div>
                     </div>
 
                     <button id="btn-send-reset-pass" onclick="handleSendResetPasswordEmail()"
-                        class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-800/50 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-200 border border-slate-700/80 rounded-xl text-xs font-semibold transition flex items-center space-x-2 focus:outline-none">
-                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-800/50 disabled:text-slate-500 text-slate-200 border border-slate-700/80 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-2 focus:outline-none">
+                        <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                             </path>
@@ -491,13 +468,12 @@
                 </div>
 
                 <!-- Forms Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <!-- Form 1: Change Email -->
-                    <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-4">
+                    <div class="bg-slate-900/90 border border-slate-800 p-5 sm:p-6 rounded-3xl shadow-xl space-y-4">
                         <div class="border-b border-slate-800 pb-3">
-                            <h3 class="text-base font-bold text-white flex items-center space-x-2">
-                                <span
-                                    class="bg-indigo-500/20 text-indigo-400 p-1 rounded-lg border border-indigo-500/30">
+                            <h3 class="text-sm sm:text-base font-bold text-white flex items-center space-x-2">
+                                <span class="bg-indigo-500/20 text-indigo-400 p-1 rounded-lg border border-indigo-500/30">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207">
@@ -509,31 +485,29 @@
                             <p class="text-xs text-slate-400 mt-1">ระบบจะส่งลิงก์ยืนยันไปที่อีเมลใหม่ก่อนทำการอัปเดต</p>
                         </div>
 
-                        <form id="form-change-email" onsubmit="handleChangeEmail(event)" class="space-y-4">
+                        <form id="form-change-email" onsubmit="handleChangeEmail(event)" class="space-y-3.5">
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านปัจจุบัน *
-                                    (เพื่อยืนยันตัวตน)</label>
+                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านปัจจุบัน * (เพื่อยืนยันตัวตน)</label>
                                 <input type="password" id="change-email-current-pass" required placeholder="••••••••"
-                                    class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-indigo-500 transition">
+                                    class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-indigo-500 transition">
                             </div>
                             <div>
                                 <label class="block text-xs text-slate-400 mb-1">อีเมลใหม่ที่ต้องการใช้ *</label>
                                 <input type="email" id="change-email-new" required placeholder="newemail@domain.com"
-                                    class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-indigo-500 transition">
+                                    class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-indigo-500 transition">
                             </div>
                             <button type="submit" id="btn-submit-change-email"
-                                class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition focus:outline-none flex items-center justify-center space-x-2">
-                                <span>ยืนยันเปลี่ยนอีเมล & ส่งลิงก์ Verify ไปอีเมลใหม่</span>
+                                class="w-full py-2.5 sm:py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition focus:outline-none flex items-center justify-center space-x-2">
+                                <span>ยืนยันเปลี่ยนอีเมล & ส่งลิงก์</span>
                             </button>
                         </form>
                     </div>
 
                     <!-- Form 2: Change Password -->
-                    <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl shadow-xl space-y-4">
+                    <div class="bg-slate-900/90 border border-slate-800 p-5 sm:p-6 rounded-3xl shadow-xl space-y-4">
                         <div class="border-b border-slate-800 pb-3">
-                            <h3 class="text-base font-bold text-white flex items-center space-x-2">
-                                <span
-                                    class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg border border-emerald-500/30">
+                            <h3 class="text-sm sm:text-base font-bold text-white flex items-center space-x-2">
+                                <span class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg border border-emerald-500/30">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
@@ -545,28 +519,24 @@
                             <p class="text-xs text-slate-400 mt-1">กำหนดรหัสผ่านใหม่เพื่อความปลอดภัยในการเข้าใช้งาน</p>
                         </div>
 
-                        <form id="form-change-password" onsubmit="handleChangePassword(event)" class="space-y-4">
+                        <form id="form-change-password" onsubmit="handleChangePassword(event)" class="space-y-3.5">
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านปัจจุบัน *
-                                    (เพื่อยืนยันตัวตน)</label>
+                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านปัจจุบัน *</label>
                                 <input type="password" id="change-pass-current" required placeholder="••••••••"
-                                    class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
+                                    class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านใหม่ * (อย่างน้อย 6
-                                    ตัวอักษร)</label>
-                                <input type="password" id="change-pass-new" required minlength="6"
-                                    placeholder="••••••••"
-                                    class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
+                                <label class="block text-xs text-slate-400 mb-1">รหัสผ่านใหม่ * (อย่างน้อย 6 ตัวอักษร)</label>
+                                <input type="password" id="change-pass-new" required minlength="6" placeholder="••••••••"
+                                    class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
                             </div>
                             <div>
                                 <label class="block text-xs text-slate-400 mb-1">ยืนยันรหัสผ่านใหม่ *</label>
-                                <input type="password" id="change-pass-confirm" required minlength="6"
-                                    placeholder="••••••••"
-                                    class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
+                                <input type="password" id="change-pass-confirm" required minlength="6" placeholder="••••••••"
+                                    class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-100 outline-none focus:border-emerald-500 transition">
                             </div>
                             <button type="submit"
-                                class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/30 transition focus:outline-none">
+                                class="w-full py-2.5 sm:py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/30 transition focus:outline-none">
                                 บันทึกการเปลี่ยนรหัสผ่านใหม่
                             </button>
                         </form>
@@ -575,10 +545,10 @@
             </div>
 
             <!-- Route 5: My Orders & Delivery Tracking Dashboard -->
-            <div id="route-user-orders" class="hidden space-y-6 my-auto max-w-5xl mx-auto w-full">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-6 rounded-3xl shadow-xl">
+            <div id="route-user-orders" class="hidden space-y-4 sm:space-y-6 max-w-5xl mx-auto w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/80 border border-slate-800 p-4 sm:p-6 rounded-3xl shadow-xl">
                     <div>
-                        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                        <h2 class="text-lg sm:text-xl font-bold text-white flex items-center space-x-2">
                             <span class="bg-emerald-500/20 text-emerald-400 p-1.5 rounded-lg border border-emerald-500/30">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -586,12 +556,12 @@
                                     </path>
                                 </svg>
                             </span>
-                            <span>จัดการรายการซื้อขาย & ติดตามสถานะจัดส่งสินค้า</span>
+                            <span>รายการซื้อขาย & ติดตามสถานะจัดส่ง</span>
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">แสดงประวัติคำสั่งซื้อ รายละเอียดสินค้า ราคา ยอดรวม และที่อยู่จัดส่งของลูกค้า</p>
+                        <p class="text-xs text-slate-400 mt-0.5">แสดงประวัติคำสั่งซื้อ รายละเอียดสินค้า และสถานะการจัดส่ง</p>
                     </div>
 
-                    <button onclick="loadOrders()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center space-x-2 focus:outline-none">
+                    <button onclick="loadOrders()" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center justify-center space-x-2 focus:outline-none">
                         <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
@@ -599,103 +569,112 @@
                     </button>
                 </div>
 
-                <div id="user-orders-list-container" class="space-y-4">
-                    <!-- Orders List rendered via JS -->
-                </div>
+                <div id="user-orders-list-container" class="space-y-4"></div>
             </div>
         </main>
     </div>
 
-    <!-- SHOPPING CART & PROMPTPAY QR CODE DRAWER OVERLAY -->
+    <!-- SHOPPING CART & PROMPTPAY QR CODE DRAWER OVERLAY (OPTIMIZED UX/UI) -->
     <div id="cart-drawer-backdrop" onclick="toggleCartDrawer()"
-        class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden transition-opacity opacity-0 duration-300"></div>
 
     <aside id="cart-drawer"
-        class="fixed top-0 right-0 h-screen w-full sm:w-96 md:w-[420px] bg-slate-900 border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between shadow-2xl">
-        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-            <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+        class="fixed top-0 right-0 h-dvh w-full sm:w-96 md:w-[420px] bg-slate-900 border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between shadow-2xl overflow-hidden">
+        
+        <!-- Drawer Header -->
+        <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900">
+            <h3 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
                 <span>🛒 ตะกร้าสินค้า</span>
             </h3>
-            <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-white p-1 rounded-lg focus:outline-none">
-                ✕
+            <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition focus:outline-none">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
 
-        <div id="cart-items-list" class="flex-1 overflow-y-auto p-5 space-y-3">
-            <!-- Cart Items rendered via JS -->
-        </div>
+        <!-- Scrollable Body (Contains Items + Shipping Address + QR Section) -->
+        <div class="flex-1 overflow-y-auto min-h-0 p-4 sm:p-5 space-y-4">
+            <!-- Cart Items List Container -->
+            <div id="cart-items-list" class="space-y-3"></div>
 
-        <div class="p-5 border-t border-slate-800 bg-slate-950 space-y-4">
-            <div class="flex justify-between items-center text-sm">
-                <span class="text-slate-400">ราคารวมทั้งหมด:</span>
-                <span id="cart-total-price" class="text-xl font-bold text-emerald-400">0 ฿</span>
+            <!-- SHIPPING ADDRESS INPUT FIELD (Inside Scrollable Body) -->
+            <div id="shipping-address-container" class="space-y-2 border-t border-slate-800/80 pt-4 hidden">
+                <label class="block text-xs font-semibold text-slate-300 flex items-center space-x-1">
+                    <span>📍 ที่อยู่สำหรับจัดส่งสินค้า *</span>
+                </label>
+                <textarea id="cart-shipping-address" rows="3" placeholder="ชื่อ-นามสกุล, เบอร์โทรศัพท์, ที่อยู่จัดส่ง..." 
+                    class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-2xl text-xs sm:text-sm text-slate-100 placeholder-slate-500 outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition shadow-inner"></textarea>
             </div>
 
-            <!-- SHIPPING ADDRESS INPUT FIELD -->
-            <div id="shipping-address-container" class="space-y-1.5 border-t border-slate-800/80 pt-3">
-                <label class="block text-xs font-semibold text-slate-300">📍 ที่อยู่สำหรับจัดส่งสินค้า *</label>
-                <textarea id="cart-shipping-address" rows="2" placeholder="ชื่อ-นามสกุล, เบอร์โทรศัพท์, ที่อยู่จัดส่ง..." 
-                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 placeholder-slate-500 outline-none focus:border-indigo-500 transition"></textarea>
-            </div>
-
-            <!-- PROMPTPAY QR CODE SECTION WITH COUNTDOWN TIMER -->
-            <div id="omise-qr-container" class="border-t border-slate-800 pt-3 hidden text-center space-y-3">
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-col items-center shadow-inner">
-                    <div class="flex items-center space-x-2 mb-2">
-                        <span class="text-xs font-bold text-emerald-400">📱 สแกนชำระเงินด้วย PromptPay</span>
+            <!-- PROMPTPAY QR CODE SECTION -->
+            <div id="omise-qr-container" class="border-t border-slate-800 pt-4 hidden text-center space-y-3">
+                <div class="bg-slate-950/90 p-4 sm:p-5 rounded-3xl border border-slate-800/90 flex flex-col items-center shadow-2xl space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">📱 สแกนชำระเงินด้วย PromptPay</span>
                     </div>
 
                     <!-- Amount & Expiry Timer Display Badge -->
-                    <div class="mb-3 px-3 py-2 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between w-full">
+                    <div class="px-3.5 py-2.5 bg-slate-900/90 rounded-2xl border border-slate-800 flex items-center justify-between w-full shadow-inner">
                         <div class="text-left">
-                            <p class="text-[10px] text-slate-400">ยอดที่ต้องชำระ:</p>
-                            <p id="omise-qr-amount-text" class="text-sm font-bold text-emerald-400">0.00 ฿</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-semibold">ยอดที่ต้องชำระ:</p>
+                            <p id="omise-qr-amount-text" class="text-xs sm:text-sm font-bold text-emerald-400">0.00 ฿</p>
                         </div>
-                        <div class="text-right border-l border-slate-800 pl-3">
-                            <p class="text-[10px] text-amber-400 font-semibold">⏳ QR หมดอายุใน:</p>
-                            <p id="qr-countdown-timer" class="text-sm font-mono font-bold text-amber-400">15:00</p>
+                        <div class="text-right border-l border-slate-800/80 pl-3.5">
+                            <p class="text-[10px] text-amber-400 font-semibold flex items-center justify-end space-x-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                                <span>QR หมดอายุใน:</span>
+                            </p>
+                            <p id="qr-countdown-timer" class="text-xs sm:text-sm font-mono font-bold text-amber-400 tracking-wider">15:00</p>
                         </div>
                     </div>
                     
-                    <!-- Image QR Code Card -->
-                    <div class="relative bg-white p-3 rounded-2xl shadow-xl border border-slate-200">
-                        <img id="omise-qr-image" src="" alt="PromptPay QR Code" class="w-48 h-48 object-contain mx-auto">
+                    <!-- Image QR Code Card Container -->
+                    <div class="relative bg-white p-3 rounded-3xl shadow-2xl border-4 border-indigo-500/20 max-w-[210px] mx-auto transition-transform hover:scale-105">
+                        <img id="omise-qr-image" src="" alt="PromptPay QR Code" class="w-40 h-40 sm:w-44 sm:h-44 object-contain mx-auto">
                     </div>
                     
                     <!-- Mobile Action Buttons: Copy Amount & Download QR Code -->
-                    <div class="flex items-center space-x-2 w-full mt-3">
+                    <div class="grid grid-cols-2 gap-2 w-full pt-1">
                         <button type="button" onclick="copyQRAmount()"
-                            class="w-1/2 py-2 px-2 bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1">
+                            class="w-full py-2 px-2.5 bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1">
                             <span>💰 คัดลอกยอดเงิน</span>
                         </button>
                         <button type="button" onclick="downloadQRCode()"
-                            class="w-1/2 py-2 px-2 bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1">
+                            class="w-full py-2 px-2.5 bg-slate-900 hover:bg-slate-800 active:scale-95 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1">
                             <span>📥 บันทึกรูป QR</span>
                         </button>
                     </div>
 
-                    <p class="text-[11px] text-slate-400 mt-3">เปิดแอปพลิเคชันธนาคารของคุณ และสแกน QR Code เพื่อชำระเงิน</p>
-                    <div class="flex items-center space-x-2 mt-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                    <p class="text-[11px] text-slate-400">เปิดแอปธนาคารของคุณ และสแกน QR Code เพื่อชำระเงิน</p>
+                    <div class="flex items-center justify-center space-x-2 pt-1">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span id="qr-status-text" class="text-xs text-amber-400 font-semibold">กำลังรอการชำระเงิน...</span>
                     </div>
                 </div>
 
                 <div class="flex space-x-2">
                     <button type="button" onclick="checkQRPaymentStatus(true)"
-                        class="w-1/2 py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        class="w-1/2 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-600/30 active:scale-[0.98] flex items-center justify-center space-x-1">
                         <span>ตรวจสอบชำระเงิน</span>
                     </button>
                     <button type="button" onclick="cancelQRPayment()"
-                        class="w-1/2 py-3 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition">
+                        class="w-1/2 py-3 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs font-semibold rounded-xl border border-slate-800 transition">
                         ยกเลิก
                     </button>
                 </div>
             </div>
+        </div>
 
+        <!-- Fixed Footer Actions (Always visible: Total Price + CTA Action Button) -->
+        <div id="cart-footer-actions" class="p-4 sm:p-5 border-t border-slate-800 bg-slate-950/95 backdrop-blur-md space-y-3 shrink-0">
+            <!-- TOTAL PRICE CONTAINER -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/60 border border-indigo-500/30 p-3.5 rounded-2xl flex justify-between items-center shadow-inner">
+                <span class="text-xs sm:text-sm font-semibold text-slate-300">ราคารวมทั้งหมด:</span>
+                <span id="cart-total-price" class="text-lg sm:text-2xl font-bold text-emerald-400 tracking-tight">0 ฿</span>
+            </div>
+
+            <!-- MAIN CTA BUTTON -->
             <button id="btn-create-qr" onclick="generatePromptPayQR()"
-                class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2">
+                class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] text-white font-bold rounded-2xl text-xs sm:text-sm transition shadow-lg shadow-emerald-600/25 flex items-center justify-center space-x-2 focus:outline-none">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
@@ -726,12 +705,12 @@
         let qrCountdownTimer = null;
         let currentQRAmount = 0;
 
-        const TAB_LOGIN_ACTIVE = "w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 focus:outline-none";
-        const TAB_REG_ACTIVE = "w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 focus:outline-none";
-        const TAB_INACTIVE = "w-1/2 py-2.5 rounded-xl text-sm font-semibold transition duration-200 text-slate-400 hover:text-white focus:outline-none";
+        const TAB_LOGIN_ACTIVE = "w-1/2 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 focus:outline-none";
+        const TAB_REG_ACTIVE = "w-1/2 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition duration-200 bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 focus:outline-none";
+        const TAB_INACTIVE = "w-1/2 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition duration-200 text-slate-400 hover:text-white focus:outline-none";
 
-        const SIDEBAR_BTN_OFF = "w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none";
-        const SIDEBAR_BTN_ON = "w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-md shadow-indigo-600/10 transition focus:outline-none";
+        const SIDEBAR_BTN_OFF = "w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent transition focus:outline-none";
+        const SIDEBAR_BTN_ON = "w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-md shadow-indigo-600/10 transition focus:outline-none";
 
         const showLoading = (title = 'กำลังดำเนินการ...') => {
             Swal.fire({ title, allowOutsideClick: false, background: '#0f172a', color: '#f8fafc', didOpen: () => Swal.showLoading() });
@@ -772,17 +751,17 @@
 
             const span = btn.querySelector('span');
             if (span) {
-                span.innerText = `ส่งลิงก์แล้ว (รออีก ${secondsLeft} วินาที)`;
+                span.innerText = `ส่งลิงก์แล้ว (${secondsLeft}s)`;
             } else {
-                btn.innerText = `ส่งลิงก์แล้ว (รออีก ${secondsLeft} วินาที)`;
+                btn.innerText = `ส่งลิงก์แล้ว (${secondsLeft}s)`;
             }
 
             const timer = setInterval(() => {
                 secondsLeft--;
                 if (span) {
-                    span.innerText = `ส่งลิงก์แล้ว (รออีก ${secondsLeft} วินาที)`;
+                    span.innerText = `ส่งลิงก์แล้ว (${secondsLeft}s)`;
                 } else {
-                    btn.innerText = `ส่งลิงก์แล้ว (รออีก ${secondsLeft} วินาที)`;
+                    btn.innerText = `ส่งลิงก์แล้ว (${secondsLeft}s)`;
                 }
 
                 if (secondsLeft <= 0) {
@@ -826,10 +805,12 @@
         });
 
         function showAuthUI() {
-            document.getElementById('main-sidebar').classList.add('hidden');
-            document.getElementById('main-sidebar').classList.remove('flex');
-            document.getElementById('main-header').classList.add('hidden');
-            document.getElementById('main-header').classList.remove('flex');
+            const sidebar = document.getElementById('main-sidebar');
+            sidebar.classList.add('hidden');
+
+            const header = document.getElementById('main-header');
+            header.classList.add('hidden');
+            header.classList.remove('flex');
 
             document.getElementById('view-auth').classList.remove('hidden');
             document.getElementById('route-admin-inventory').classList.add('hidden');
@@ -844,7 +825,6 @@
 
             const sidebar = document.getElementById('main-sidebar');
             sidebar.classList.remove('hidden');
-            sidebar.classList.add('flex');
 
             const header = document.getElementById('main-header');
             header.classList.remove('hidden');
@@ -898,9 +878,11 @@
                 if (sidebar.classList.contains('-translate-x-full')) {
                     sidebar.classList.remove('-translate-x-full');
                     backdrop.classList.remove('hidden');
+                    setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
                 } else {
                     sidebar.classList.add('-translate-x-full');
-                    backdrop.classList.add('hidden');
+                    backdrop.classList.add('opacity-0');
+                    setTimeout(() => backdrop.classList.add('hidden'), 300);
                 }
             } else {
                 if (sidebar.classList.contains('md:w-64')) {
@@ -944,29 +926,31 @@
             } else if (route === 'my-orders') {
                 document.getElementById('route-user-orders').classList.remove('hidden');
                 if (btnOrders) btnOrders.className = SIDEBAR_BTN_ON;
-                if (pageTitle) pageTitle.innerText = "รายการสั่งซื้อ & ติดตามสถานะจัดส่ง";
+                if (pageTitle) pageTitle.innerText = "รายการสั่งซื้อ & จัดส่ง";
                 loadOrders();
             } else if (route === 'batch-add') {
                 document.getElementById('route-admin-batch-add').classList.remove('hidden');
                 if (btnBatch) btnBatch.className = SIDEBAR_BTN_ON;
-                if (pageTitle) pageTitle.innerText = "เพิ่มสินค้าหลายรายการ (Batch Add)";
+                if (pageTitle) pageTitle.innerText = "เพิ่มสินค้าหลายรายการ";
                 if (document.getElementById('batch-items-container').children.length === 0) {
                     addBatchRow();
                 }
             } else if (route === 'stock-logs') {
                 document.getElementById('route-admin-stock-logs').classList.remove('hidden');
                 if (btnLogs) btnLogs.className = SIDEBAR_BTN_ON;
-                if (pageTitle) pageTitle.innerText = "ประวัติการเคลื่อนไหวสต็อก";
+                if (pageTitle) pageTitle.innerText = "ประวัติสต็อกเข้า-ออก";
                 renderGlobalStockLogs();
             } else if (route === 'settings') {
                 document.getElementById('route-user-settings').classList.remove('hidden');
                 btnSettings.className = SIDEBAR_BTN_ON;
-                if (pageTitle) pageTitle.innerText = "จัดการข้อมูลส่วนตัวและความปลอดภัย";
+                if (pageTitle) pageTitle.innerText = "ตั้งค่าบัญชีผู้ใช้";
             }
 
             if (window.innerWidth < 768) {
                 document.getElementById('main-sidebar').classList.add('-translate-x-full');
-                document.getElementById('sidebar-backdrop').classList.add('hidden');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                backdrop.classList.add('opacity-0');
+                setTimeout(() => backdrop.classList.add('hidden'), 300);
             }
         }
 
@@ -1102,9 +1086,6 @@
             }
         }
 
-        // ---------------------------------------------------------
-        // SECURITY & PROFILE MANAGEMENT FUNCTIONS
-        // ---------------------------------------------------------
         async function reauthenticateUser(currentPassword) {
             const user = auth.currentUser;
             if (!user) throw new Error('ไม่พบข้อมูลผู้ใช้งาน');
@@ -1159,7 +1140,7 @@
                 );
                 
                 document.getElementById('form-change-email').reset();
-                startButtonCooldown('btn-submit-change-email', 'ยืนยันเปลี่ยนอีเมล & ส่งลิงก์ Verify ไปอีเมลใหม่', 60);
+                startButtonCooldown('btn-submit-change-email', 'ยืนยันเปลี่ยนอีเมล & ส่งลิงก์', 60);
 
             } catch (err) {
                 notifyError('การเปลี่ยนอีเมลล้มเหลว', getFirebaseErrorMessage(err));
@@ -1274,7 +1255,7 @@
             salesChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['ยอดขายรวมทั้งหมด (บาท)', 'กำไรสุทธิหักทุน (บาท)', 'จำนวนสินค้าที่ขายไป (ชิ้น)'],
+                    labels: ['ยอดขายรวม (บาท)', 'กำไรสุทธิ (บาท)', 'จำนวนที่ขาย (ชิ้น)'],
                     datasets: [{
                         label: 'สรุปผลประกอบการยอดขาย',
                         data: [salesRevenue, profit, qtySold],
@@ -1289,9 +1270,9 @@
                             '#f59e0b'
                         ],
                         borderWidth: 2,
-                        borderRadius: 12,
+                        borderRadius: 10,
                         borderSkipped: false,
-                        barThickness: window.innerWidth < 640 ? 30 : 55
+                        barThickness: window.innerWidth < 640 ? 25 : 45
                     }]
                 },
                 options: {
@@ -1305,7 +1286,7 @@
                             bodyColor: '#cbd5e1',
                             borderColor: '#334155',
                             borderWidth: 1,
-                            padding: 12,
+                            padding: 10,
                             displayColors: false,
                             callbacks: {
                                 label: function (context) {
@@ -1321,13 +1302,13 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#94a3b8', font: { family: 'Prompt', size: 12 } }
+                            ticks: { color: '#94a3b8', font: { family: 'Prompt', size: 11 } }
                         },
                         y: {
                             grid: { color: 'rgba(51, 65, 85, 0.4)' },
                             ticks: {
                                 color: '#94a3b8',
-                                font: { family: 'Prompt', size: 11 },
+                                font: { family: 'Prompt', size: 10 },
                                 callback: function (value) {
                                     return value.toLocaleString();
                                 }
@@ -1357,9 +1338,9 @@
 
             if (items.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-full py-16 text-center bg-slate-900/40 border border-slate-800 rounded-3xl">
-                        <svg class="w-16 h-16 mx-auto text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                        <p class="text-slate-400 font-medium">ไม่พบรายการสินค้าในระบบ</p>
+                    <div class="col-span-full py-12 sm:py-16 text-center bg-slate-900/40 border border-slate-800 rounded-3xl">
+                        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-slate-700 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                        <p class="text-xs sm:text-sm text-slate-400 font-medium">ไม่พบรายการสินค้าในระบบ</p>
                     </div>
                 `;
                 return;
@@ -1382,39 +1363,39 @@
                 }
 
                 const card = document.createElement('div');
-                card.className = 'bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between hover:border-indigo-500/40 transition shadow-lg';
+                card.className = 'bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between hover:border-indigo-500/40 transition shadow-lg group';
 
                 card.innerHTML = `
                     <div>
-                        <div class="relative overflow-hidden rounded-xl bg-slate-950 h-48 mb-3">
-                            <img id="main-img-${item.id}" src="${images[0]}" class="w-full h-full object-cover">
-                            <span class="absolute top-2 right-2 bg-slate-950/80 text-xs px-2.5 py-1 rounded-full border border-slate-800 text-indigo-400 font-medium">${item.brand}</span>
+                        <div class="relative overflow-hidden rounded-xl bg-slate-950 aspect-video mb-3">
+                            <img id="main-img-${item.id}" src="${images[0]}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <span class="absolute top-2 right-2 bg-slate-950/80 text-[11px] px-2.5 py-0.5 rounded-full border border-slate-800 text-indigo-400 font-medium">${item.brand}</span>
                             <span class="absolute bottom-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-md border ${stockBadgeClass}">${stockText}</span>
                         </div>
-                        <div class="flex space-x-2 overflow-x-auto mb-3 pb-1">
+                        <div class="flex space-x-1.5 overflow-x-auto mb-3 pb-1">
                             ${images.map((img) => `
-                                <img src="${img}" onclick="document.getElementById('main-img-${item.id}').src='${img}'" class="w-10 h-10 object-cover rounded-lg border border-slate-800 cursor-pointer hover:border-indigo-500 transition">
+                                <img src="${img}" onclick="document.getElementById('main-img-${item.id}').src='${img}'" class="w-9 h-9 sm:w-10 sm:h-10 object-cover rounded-lg border border-slate-800 cursor-pointer hover:border-indigo-500 transition shrink-0">
                             `).join('')}
                         </div>
 
-                        <h3 class="font-bold text-white text-base mb-1">${item.name}</h3>
-                        <div class="grid grid-cols-2 gap-2 text-xs bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mb-3">
-                            ${isAdmin ? `<div><span class="text-slate-500">ทุน:</span> <span class="text-rose-400 font-bold">${Number(item.cost_price || 0).toLocaleString()} ฿</span></div>` : ''}
-                            <div><span class="text-slate-500">ราคาขาย:</span> <span class="text-emerald-400 font-bold">${Number(item.price || 0).toLocaleString()} ฿</span></div>
-                            <div><span class="text-slate-500">คงเหลือ:</span> <span class="text-amber-400 font-bold">${stockNum} ชิ้น</span></div>
-                            ${isAdmin ? `<div><span class="text-slate-500">กำไรคาดการณ์:</span> <span class="text-indigo-400 font-bold">${(Number(item.price || 0) - Number(item.cost_price || 0)).toLocaleString()} ฿</span></div>` : ''}
+                        <h3 class="font-bold text-white text-sm sm:text-base mb-2 line-clamp-1">${item.name}</h3>
+                        <div class="grid grid-cols-2 gap-1.5 sm:gap-2 text-xs bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mb-3">
+                            ${isAdmin ? `<div><span class="text-slate-500">ทุน:</span> <span class="text-rose-400 font-bold block sm:inline">${Number(item.cost_price || 0).toLocaleString()} ฿</span></div>` : ''}
+                            <div><span class="text-slate-500">ราคาขาย:</span> <span class="text-emerald-400 font-bold block sm:inline">${Number(item.price || 0).toLocaleString()} ฿</span></div>
+                            <div><span class="text-slate-500">คงเหลือ:</span> <span class="text-amber-400 font-bold block sm:inline">${stockNum} ชิ้น</span></div>
+                            ${isAdmin ? `<div><span class="text-slate-500">กำไร:</span> <span class="text-indigo-400 font-bold block sm:inline">${(Number(item.price || 0) - Number(item.cost_price || 0)).toLocaleString()} ฿</span></div>` : ''}
                         </div>
                     </div>
 
                     ${isAdmin ? `
-                        <div class="flex space-x-2 mt-2">
-                            <button onclick="handleAdjustStockModal('${item.id}')" class="w-1/2 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded-xl text-xs font-semibold transition focus:outline-none">ปรับสต็อก เข้า/ออก</button>
-                            <button onclick="handleDelete('${item.id}')" class="w-1/2 py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-semibold transition focus:outline-none">ลบสินค้า</button>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="handleAdjustStockModal('${item.id}')" class="py-2 px-1 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded-xl text-[11px] sm:text-xs font-semibold transition focus:outline-none truncate">ปรับสต็อก</button>
+                            <button onclick="handleDelete('${item.id}')" class="py-2 px-1 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 rounded-xl text-[11px] sm:text-xs font-semibold transition focus:outline-none truncate">ลบสินค้า</button>
                         </div>
                     ` : `
                         <div class="mt-2">
                             <button onclick="addToCart('${item.id}')" ${stockNum === 0 ? 'disabled' : ''} 
-                                class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-600/20 focus:outline-none">
+                                class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-600/20 active:scale-95 focus:outline-none">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"></path></svg>
                                 <span>${stockNum > 0 ? '+ เพิ่มลงตะกร้า' : 'สินค้าหมดสต็อก'}</span>
                             </button>
@@ -1496,10 +1477,12 @@
             if (isHidden) {
                 drawer.classList.remove('translate-x-full');
                 backdrop.classList.remove('hidden');
+                setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
                 renderCartDrawer();
             } else {
                 drawer.classList.add('translate-x-full');
-                backdrop.classList.add('hidden');
+                backdrop.classList.add('opacity-0');
+                setTimeout(() => backdrop.classList.add('hidden'), 300);
                 cancelQRPayment();
             }
         }
@@ -1507,20 +1490,24 @@
         function renderCartDrawer() {
             const list = document.getElementById('cart-items-list');
             const totalEl = document.getElementById('cart-total-price');
+            const shippingContainer = document.getElementById('shipping-address-container');
+            const btnCreateQr = document.getElementById('btn-create-qr');
+            const qrContainer = document.getElementById('omise-qr-container');
+
             list.innerHTML = '';
 
             if (userCart.length === 0) {
-                list.innerHTML = `<p class="text-center text-slate-500 py-12 text-sm">ตะกร้าสินค้ายังไม่มีรายการ</p>`;
+                list.innerHTML = `<p class="text-center text-slate-500 py-12 text-xs sm:text-sm">ตะกร้าสินค้ายังไม่มีรายการ</p>`;
                 totalEl.innerText = `0 ฿`;
-                document.getElementById('btn-create-qr').classList.add('hidden');
-                document.getElementById('shipping-address-container').classList.add('hidden');
-                document.getElementById('omise-qr-container').classList.add('hidden');
+                btnCreateQr.classList.add('hidden');
+                shippingContainer.classList.add('hidden');
+                qrContainer.classList.add('hidden');
                 cancelQRPayment();
                 return;
             }
 
-            document.getElementById('btn-create-qr').classList.remove('hidden');
-            document.getElementById('shipping-address-container').classList.remove('hidden');
+            shippingContainer.classList.remove('hidden');
+            btnCreateQr.classList.remove('hidden');
 
             let total = 0;
             userCart.forEach(item => {
@@ -1528,17 +1515,17 @@
                 total += subtotal;
 
                 const row = document.createElement('div');
-                row.className = 'flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-slate-800';
+                row.className = 'flex items-center justify-between bg-slate-950/80 p-3 rounded-2xl border border-slate-800/80 shadow-sm hover:border-slate-700 transition';
                 row.innerHTML = `
-                    <img src="${item.image || 'https://via.placeholder.com/60'}" class="w-12 h-12 object-cover rounded-xl border border-slate-800">
+                    <img src="${item.image || 'https://via.placeholder.com/60'}" class="w-12 h-12 object-cover rounded-xl border border-slate-800 shrink-0">
                     <div class="flex-1 px-3 min-w-0">
                         <p class="text-xs font-bold text-white truncate">${item.name}</p>
-                        <p class="text-[11px] text-emerald-400 font-bold">${Number(item.price).toLocaleString()} ฿</p>
+                        <p class="text-[11px] text-emerald-400 font-bold mt-0.5">${Number(item.price).toLocaleString()} ฿</p>
                     </div>
-                    <div class="flex items-center space-x-1.5 bg-slate-900 px-2 py-1 rounded-xl border border-slate-800">
-                        <button onclick="updateCartItemQty('${item.id}', -1)" class="text-xs text-slate-400 hover:text-white px-1 font-bold">-</button>
-                        <span class="text-xs font-bold text-white px-1.5">${item.quantity}</span>
-                        <button onclick="updateCartItemQty('${item.id}', 1)" class="text-xs text-slate-400 hover:text-white px-1 font-bold">+</button>
+                    <div class="flex items-center space-x-1.5 bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-800 shrink-0">
+                        <button onclick="updateCartItemQty('${item.id}', -1)" class="text-xs text-slate-400 hover:text-white px-1.5 py-0.5 font-bold active:scale-95 transition">-</button>
+                        <span class="text-xs font-bold text-white px-1">${item.quantity}</span>
+                        <button onclick="updateCartItemQty('${item.id}', 1)" class="text-xs text-slate-400 hover:text-white px-1.5 py-0.5 font-bold active:scale-95 transition">+</button>
                     </div>
                 `;
                 list.appendChild(row);
@@ -1581,10 +1568,8 @@
 
                 Swal.close();
 
-                // เริ่มต้นเวลานับถอยหลัง 15 นาที (900 วินาที)
-                startQRCountdownTimer(900);
+                startQRCountdownTimer(data.expires_in_seconds || 900);
 
-                // วนตรวจสอบการชำระเงินอัตโนมัติทุกๆ 3 วินาที (Auto Polling)
                 if (qrPollInterval) clearInterval(qrPollInterval);
                 qrPollInterval = setInterval(() => {
                     checkQRPaymentStatus(false);
@@ -1645,31 +1630,27 @@
                 if (data.payment_status === 'paid') {
                     cancelQRPayment();
 
-                    // ล้างตะกร้าสินค้า
                     userCart = [];
                     saveCart();
                     toggleCartDrawer();
                     loadInventory();
 
                     notifySuccess('การชำระเงินสำเร็จ!', 'ขอบคุณสำหรับการสั่งซื้อ ระบบได้บันทึกคำสั่งซื้อเรียบร้อยแล้ว');
-                    
-                    // เปลี่ยนไปเปิดหน้าติดตามการจัดส่งทันที
                     switchRoute('my-orders');
 
-                } else if (data.payment_status === 'failed') {
+                } else if (data.payment_status === 'failed' || data.payment_status === 'expired') {
                     cancelQRPayment();
-                    notifyError('ชำระเงินไม่สำเร็จ', data.message || 'การชำระเงินถูกยกเลิกหรือล้มเหลว');
+                    notifyError('ชำระเงินไม่สำเร็จ', data.message || 'การชำระเงินถูกยกเลิกหรือ QR Code หมดอายุ');
                 } else {
-                    // สถานะยังคงเป็น pending
                     if (isManual) {
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
                             icon: 'info',
                             title: 'ยังไม่พบยอดชำระเงิน',
-                            text: 'กรุณาสแกน QR Code เพื่อชำระเงิน แล้วลองกดตรวจสอบอีกครั้ง',
+                            text: 'กรุณาสแกน QR Code ชำระเงินแล้วกดตรวจสอบอีกครั้ง',
                             showConfirmButton: false,
-                            timer: 3500,
+                            timer: 3000,
                             background: '#0f172a',
                             color: '#f8fafc'
                         });
@@ -1725,7 +1706,7 @@
         // ---------------------------------------------------------
         async function loadOrders() {
             const container = document.getElementById('user-orders-list-container');
-            container.innerHTML = '<div class="py-12 text-center text-slate-400 text-sm">กำลังโหลดข้อมูลรายการสั่งซื้อ...</div>';
+            container.innerHTML = '<div class="py-12 text-center text-slate-400 text-xs sm:text-sm">กำลังโหลดข้อมูลรายการสั่งซื้อ...</div>';
 
             try {
                 const res = await fetch('/api/orders');
@@ -1734,7 +1715,7 @@
 
                 renderOrdersList(result.data || []);
             } catch (err) {
-                container.innerHTML = `<div class="py-8 text-center text-rose-400 text-sm">ไม่สามารถโหลดรายการสั่งซื้อได้: ${err.message}</div>`;
+                container.innerHTML = `<div class="py-8 text-center text-rose-400 text-xs sm:text-sm">ไม่สามารถโหลดรายการสั่งซื้อได้: ${err.message}</div>`;
             }
         }
 
@@ -1744,9 +1725,9 @@
 
             if (orders.length === 0) {
                 container.innerHTML = `
-                    <div class="py-16 text-center bg-slate-900/40 border border-slate-800 rounded-3xl">
-                        <svg class="w-16 h-16 mx-auto text-slate-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                        <p class="text-slate-400 font-medium">ยังไม่มีประวัติรายการสั่งซื้อ</p>
+                    <div class="py-12 sm:py-16 text-center bg-slate-900/40 border border-slate-800 rounded-3xl">
+                        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-slate-700 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        <p class="text-xs sm:text-sm text-slate-400 font-medium">ยังไม่มีประวัติรายการสั่งซื้อ</p>
                     </div>
                 `;
                 return;
@@ -1758,23 +1739,23 @@
                 const items = order.items || [];
                 const status = order.status || 'preparing';
 
-                let statusBadge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>⏳ กำลังเตรียมจัดส่ง</span></span>`;
+                let statusBadge = `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>⏳ เตรียมจัดส่ง</span></span>`;
                 if (status === 'shipped') {
-                    statusBadge = `<span class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-indigo-400"></span><span>🚚 อยู่ระหว่างจัดส่ง</span></span>`;
+                    statusBadge = `<span class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-indigo-400"></span><span>🚚 อยู่ระหว่างจัดส่ง</span></span>`;
                 } else if (status === 'delivered') {
-                    statusBadge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>✅ จัดส่งสำเร็จ</span></span>`;
+                    statusBadge = `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>✅ จัดส่งสำเร็จ</span></span>`;
                 }
 
                 const card = document.createElement('div');
-                card.className = 'bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 hover:border-indigo-500/30 transition shadow-xl';
+                card.className = 'bg-slate-900/90 border border-slate-800 p-4 sm:p-6 rounded-3xl space-y-3 sm:space-y-4 shadow-xl';
 
                 card.innerHTML = `
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-4 gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-3 gap-2">
                         <div>
-                            <span class="text-xs text-slate-400 font-mono">Order Charge ID: <strong class="text-indigo-400 font-bold">${order.charge_id}</strong></span>
-                            <p class="text-xs text-slate-500 mt-0.5">⏰ วันที่สั่งซื้อ: ${order.created_at} | ลูกค้า: ${order.user_email}</p>
+                            <span class="text-[11px] sm:text-xs text-slate-400 font-mono">Order ID: <strong class="text-indigo-400 font-bold">${order.charge_id}</strong></span>
+                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">⏰ ${order.created_at} | ลูกค้า: ${order.user_email}</p>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center justify-between sm:justify-end space-x-2">
                             ${statusBadge}
                             ${isAdmin ? `
                                 <select onchange="handleUpdateOrderStatus('${order.charge_id}', this.value)" class="bg-slate-950 border border-slate-700 text-xs text-slate-200 p-1.5 rounded-xl outline-none focus:border-indigo-500">
@@ -1786,35 +1767,33 @@
                         </div>
                     </div>
 
-                    <div class="space-y-3 bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">รายละเอียดรายการสินค้าที่สั่งซื้อ</p>
+                    <div class="space-y-2.5 bg-slate-950 p-3 sm:p-4 rounded-2xl border border-slate-800/80">
+                        <p class="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">รายการสินค้าที่สั่งซื้อ</p>
                         ${items.map(item => `
                             <div class="flex items-center justify-between text-xs border-b border-slate-900 last:border-0 pb-2 last:pb-0">
-                                <div class="flex items-center space-x-3">
-                                    <img src="${item.image || 'https://via.placeholder.com/50'}" class="w-10 h-10 object-cover rounded-xl border border-slate-800">
-                                    <div>
-                                        <p class="font-bold text-white">${item.name}</p>
-                                        <p class="text-slate-500 text-[11px]">ราคาต่อชิ้น: ${Number(item.price).toLocaleString()} ฿</p>
+                                <div class="flex items-center space-x-2.5 min-w-0 pr-2">
+                                    <img src="${item.image || 'https://via.placeholder.com/50'}" class="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-xl border border-slate-800 shrink-0">
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-white truncate text-xs sm:text-sm">${item.name}</p>
+                                        <p class="text-slate-500 text-[10px] sm:text-[11px]">ราคาต่อชิ้น: ${Number(item.price).toLocaleString()} ฿</p>
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-amber-400">x${item.quantity} ชิ้น</p>
-                                    <p class="font-bold text-emerald-400 text-sm">${(item.price * item.quantity).toLocaleString()} ฿</p>
+                                <div class="text-right shrink-0">
+                                    <p class="font-bold text-amber-400 text-xs">x${item.quantity}</p>
+                                    <p class="font-bold text-emerald-400 text-xs sm:text-sm">${(item.price * item.quantity).toLocaleString()} ฿</p>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                        <div class="md:col-span-2 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
-                            <p class="text-xs font-bold text-indigo-400 flex items-center space-x-1 mb-1">
-                                <span>📍 ที่อยู่สำหรับจัดส่งสินค้าของลูกค้า</span>
-                            </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                        <div class="md:col-span-2 bg-slate-950/60 p-3 sm:p-4 rounded-2xl border border-slate-800/80">
+                            <p class="text-xs font-bold text-indigo-400 mb-0.5">📍 ที่อยู่จัดส่ง</p>
                             <p class="text-xs text-slate-300 leading-relaxed">${order.shipping_address || 'ไม่ระบุที่อยู่'}</p>
                         </div>
-                        <div class="bg-slate-950/60 p-4 rounded-2xl border border-emerald-500/20 flex flex-col justify-center items-end">
-                            <p class="text-xs text-slate-400 font-medium">ยอดชำระสุทธิ (PromptPay)</p>
-                            <p class="text-2xl font-bold text-emerald-400 mt-1">${Number(order.total_amount).toLocaleString()} ฿</p>
+                        <div class="bg-slate-950/60 p-3 sm:p-4 rounded-2xl border border-emerald-500/20 flex flex-col justify-center items-start sm:items-end">
+                            <p class="text-[11px] sm:text-xs text-slate-400 font-medium">ยอดชำระสุทธิ (PromptPay)</p>
+                            <p class="text-xl sm:text-2xl font-bold text-emerald-400 mt-0.5">${Number(order.total_amount).toLocaleString()} ฿</p>
                         </div>
                     </div>
                 `;
@@ -1824,7 +1803,7 @@
         }
 
         async function handleUpdateOrderStatus(chargeId, newStatus) {
-            showLoading('กำลังอัปเดตสถานะการจัดส่ง...');
+            showLoading('กำลังอัปเดตสถานะจัดส่ง...');
             try {
                 const res = await fetch(`/api/orders/${chargeId}/status`, {
                     method: 'PUT',
@@ -1862,49 +1841,49 @@
 
             const card = document.createElement('div');
             card.id = `batch-row-${rowId}`;
-            card.className = 'bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-4 relative group hover:border-indigo-500/40 transition shadow-xl';
+            card.className = 'bg-slate-900/90 border border-slate-800 p-4 sm:p-6 rounded-3xl space-y-3 sm:space-y-4 relative group hover:border-indigo-500/40 transition shadow-xl';
 
             card.innerHTML = `
-                <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                <div class="flex justify-between items-center border-b border-slate-800/80 pb-2.5">
                     <span class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center space-x-2">
                         <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
                         <span>รายการสินค้า #${container.children.length + 1}</span>
                     </span>
-                    <button type="button" onclick="removeBatchRow('${rowId}')" class="text-xs text-rose-400 hover:text-rose-300 font-semibold transition bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-500/20 focus:outline-none">
+                    <button type="button" onclick="removeBatchRow('${rowId}')" class="text-[11px] sm:text-xs text-rose-400 hover:text-rose-300 font-semibold transition bg-rose-500/10 px-2.5 py-1 rounded-lg border border-rose-500/20 focus:outline-none">
                         ✕ ลบช่องนี้
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">ชื่อรุ่น / สเปกคอมพิวเตอร์ *</label>
-                        <input type="text" name="items[${rowId}][name]" placeholder="เช่น ASUS ROG Strix G16" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-slate-100">
+                        <input type="text" name="items[${rowId}][name]" placeholder="เช่น ASUS ROG Strix G16" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-slate-100">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">แบรนด์ *</label>
-                        <input type="text" name="items[${rowId}][brand]" placeholder="เช่น ASUS, Apple, Dell" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-slate-100">
+                        <input type="text" name="items[${rowId}][brand]" placeholder="เช่น ASUS, Apple, Dell" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-slate-100">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">จำนวนสินค้าเริ่มต้น (ชิ้น) *</label>
-                        <input type="number" name="items[${rowId}][stock]" min="1" value="1" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-amber-400 font-bold">
+                        <label class="block text-xs text-slate-400 mb-1">จำนวนสต็อก (ชิ้น) *</label>
+                        <input type="number" name="items[${rowId}][stock]" min="1" value="1" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-indigo-500 text-xs sm:text-sm text-amber-400 font-bold">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">ราคาทุน (บาท) *</label>
-                        <input type="number" name="items[${rowId}][cost_price]" placeholder="0" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-rose-500 text-xs sm:text-sm text-rose-400 font-bold">
+                        <input type="number" name="items[${rowId}][cost_price]" placeholder="0" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-rose-500 text-xs sm:text-sm text-rose-400 font-bold">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">ราคาขาย (บาท) *</label>
-                        <input type="number" name="items[${rowId}][price]" placeholder="0" required class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-emerald-500 text-xs sm:text-sm text-emerald-400 font-bold">
+                        <input type="number" name="items[${rowId}][price]" placeholder="0" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-emerald-500 text-xs sm:text-sm text-emerald-400 font-bold">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-slate-400 mb-2">รูปภาพสินค้า (อัปโหลดได้หลายรูปประจำรายการนี้):</label>
-                    <input type="file" name="items[${rowId}][images]" accept="image/*" multiple required onchange="previewBatchRowImages(event, '${rowId}')" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-indigo-600 file:text-white cursor-pointer">
-                    <div id="batch-preview-${rowId}" class="flex flex-wrap gap-2 mt-3 hidden"></div>
+                    <label class="block text-xs text-slate-400 mb-1.5">รูปภาพสินค้า (อัปโหลดหลายรูปได้):</label>
+                    <input type="file" name="items[${rowId}][images]" accept="image/*" multiple required onchange="previewBatchRowImages(event, '${rowId}')" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-600 file:text-white cursor-pointer">
+                    <div id="batch-preview-${rowId}" class="flex flex-wrap gap-2 mt-2.5 hidden"></div>
                 </div>
             `;
 
@@ -1940,7 +1919,7 @@
                     reader.onload = (e) => {
                         const img = document.createElement('img');
                         img.src = e.target.result;
-                        img.className = 'w-12 h-12 object-cover rounded-lg border border-indigo-500/40 shadow';
+                        img.className = 'w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-lg border border-indigo-500/40 shadow';
                         previewContainer.appendChild(img);
                     };
                     reader.readAsDataURL(file);
@@ -1983,20 +1962,20 @@
 
         async function handleAdjustStockModal(compId) {
             const { value: formValues } = await Swal.fire({
-                title: 'ปรับสต็อกเข้า-ออกสินค้า (Stock IN / OUT)',
+                title: 'ปรับสต็อกสินค้า (IN / OUT)',
                 background: '#0f172a',
                 color: '#f8fafc',
                 html: `
-                    <select id="swal-type" class="w-full mb-3 p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm">
+                    <select id="swal-type" class="w-full mb-3 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-xs sm:text-sm">
                         <option value="IN">📥 สินค้าเข้า (+ Stock IN)</option>
                         <option value="OUT">📤 สินค้าออก (- Stock OUT)</option>
                     </select>
-                    <input id="swal-qty" type="number" min="1" placeholder="จำนวนสินค้า (ชิ้น)" class="w-full mb-3 p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm">
-                    <input id="swal-note" type="text" placeholder="หมายเหตุ (เช่น เติมสต็อกรอบเดือน / ตัดขายล็อตใหญ่)" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-sm">
+                    <input id="swal-qty" type="number" min="1" placeholder="จำนวนสินค้า (ชิ้น)" class="w-full mb-3 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-xs sm:text-sm">
+                    <input id="swal-note" type="text" placeholder="หมายเหตุ..." class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-100 text-xs sm:text-sm">
                 `,
                 focusConfirm: false,
                 showCancelButton: true,
-                confirmButtonText: 'บันทึกการปรับสต็อก',
+                confirmButtonText: 'บันทึก',
                 cancelButtonText: 'ยกเลิก',
                 preConfirm: () => {
                     return {
@@ -2047,27 +2026,27 @@
             allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             if (allLogs.length === 0) {
-                container.innerHTML = '<p class="text-center text-slate-500 py-8 text-sm">ยังไม่มีประวัติการเข้า-ออกสินค้า</p>';
+                container.innerHTML = '<p class="text-center text-slate-500 py-8 text-xs sm:text-sm">ยังไม่มีประวัติการเข้า-ออกสินค้า</p>';
                 return;
             }
 
             allLogs.forEach(log => {
                 const isIN = log.type === 'IN';
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-xs';
+                item.className = 'flex items-center justify-between p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs';
                 item.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <span class="px-2.5 py-1 rounded-full font-bold ${isIN ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
-                            ${isIN ? '📥 เข้า (IN)' : '📤 ออก (OUT)'}
+                    <div class="flex items-center space-x-2.5 min-w-0 pr-2">
+                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] sm:text-xs shrink-0 ${isIN ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+                            ${isIN ? '📥 IN' : '📤 OUT'}
                         </span>
-                        <div>
-                            <p class="font-bold text-white">${log.comp_name} (${log.comp_brand})</p>
-                            <p class="text-slate-400 text-[11px]">${log.note || '-'}</p>
+                        <div class="min-w-0">
+                            <p class="font-bold text-white truncate text-xs sm:text-sm">${log.comp_name} (${log.comp_brand})</p>
+                            <p class="text-slate-400 text-[10px] sm:text-[11px] truncate">${log.note || '-'}</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="font-bold ${isIN ? 'text-emerald-400' : 'text-rose-400'} text-sm">${isIN ? '+' : '-'}${log.quantity} ชิ้น</p>
-                        <p class="text-slate-500 text-[10px]">⏰ ${log.timestamp} | โดย ${log.by}</p>
+                    <div class="text-right shrink-0">
+                        <p class="font-bold ${isIN ? 'text-emerald-400' : 'text-rose-400'} text-xs sm:text-sm">${isIN ? '+' : '-'}${log.quantity} ชิ้น</p>
+                        <p class="text-slate-500 text-[9px] sm:text-[10px]">⏰ ${log.timestamp}</p>
                     </div>
                 `;
                 container.appendChild(item);
